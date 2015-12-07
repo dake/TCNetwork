@@ -290,19 +290,22 @@
                 
                 if (request.shouldResumeDownload) {
                     [request loadResumeData:^(NSData *data) {
-                        NSProgress *progress = nil;
                         AFHTTPSessionManager *requestMgr = self.requestManager;
                         @synchronized(requestMgr) {
                             
+                            request.downloadProgress = [[NSProgress alloc] init];
                             if (nil != data) {
-                                task = [requestMgr downloadTaskWithResumeData:data progress:&progress destination:destination completionHandler:completionHandler];
+                                task = [requestMgr downloadTaskWithResumeData:data progress:^(NSProgress * _Nonnull downloadProgress) {
+                                    request.downloadProgress = downloadProgress;
+                                } destination:destination completionHandler:completionHandler];
                             }
                             
                             if (nil == task) {
-                                task = [requestMgr downloadTaskWithRequest:urlRequest progress:&progress destination:destination completionHandler:completionHandler];
+                                task = [requestMgr downloadTaskWithRequest:urlRequest progress:^(NSProgress * _Nonnull downloadProgress) {
+                                    request.downloadProgress = downloadProgress;
+                                } destination:destination completionHandler:completionHandler];
                             }
                         }
-                        request.downloadProgress = progress;
                         [self addTask:task toRequest:request];
                         [task resume];
                     }];
@@ -310,27 +313,32 @@
                     return;
                     
                 } else {
-                    
-                    NSProgress *progress = nil;
-                    task = [requestMgr downloadTaskWithRequest:urlRequest progress:&progress destination:destination completionHandler:completionHandler];
-                    request.downloadProgress = progress;
+                    task = [requestMgr downloadTaskWithRequest:urlRequest progress:^(NSProgress * _Nonnull downloadProgress) {
+                        request.downloadProgress = downloadProgress;
+                    } destination:destination completionHandler:completionHandler];
                     [task resume];
                 }
                 break;
             }
                 
             case kTCHTTPRequestMethodGet: {
-                task = [requestMgr GET:url parameters:param success:successBlock failure:failureBlock];
+                task = [requestMgr GET:url parameters:param progress:^(NSProgress * _Nonnull downloadProgress) {
+                    request.downloadProgress = downloadProgress;
+                } success:successBlock failure:failureBlock];
                 break;
             }
                 
             case kTCHTTPRequestMethodPost: {
                 
                 if (nil != request.constructingBodyBlock) {
-                    task = [requestMgr POST:url parameters:param constructingBodyWithBlock:request.constructingBodyBlock success:successBlock failure:failureBlock];
+                    task = [requestMgr POST:url parameters:param constructingBodyWithBlock:request.constructingBodyBlock progress:^(NSProgress * _Nonnull uploadProgress) {
+                        request.uploadProgress = uploadProgress;
+                    } success:successBlock failure:failureBlock];
                     request.constructingBodyBlock = nil;
                 } else {
-                    task = [requestMgr POST:url parameters:param success:successBlock failure:failureBlock];
+                    task = [requestMgr POST:url parameters:param progress:^(NSProgress * _Nonnull uploadProgress) {
+                        request.uploadProgress = uploadProgress;
+                    } success:successBlock failure:failureBlock];
                 }
                 break;
             }
