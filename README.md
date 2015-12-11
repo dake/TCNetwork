@@ -9,7 +9,7 @@ Still using AFNetworking 2.x ? see [TCNetwork 1.0](https://github.com/dake/TCNet
 
 ## Features
 
-- all request are NSURLSession based
+- All requests are NSURLSession based
 - Response can be cached offline by expiration time
 - Resuming download
 - `block` and `delegate` callback
