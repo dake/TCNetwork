@@ -70,8 +70,8 @@
 - (NSString *)cachePathForResponse
 {
     if (nil == _cachePathForResponse) {
-        NSString *pathOfLibrary = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject];
-        _cachePathForResponse = [pathOfLibrary stringByAppendingPathComponent:@"TCHTTPRequestCache"];
+        NSString *path = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject];
+        _cachePathForResponse = [path stringByAppendingPathComponent:@"TCHTTPRequestCache"];
     }
     
     return _cachePathForResponse;
@@ -166,9 +166,9 @@
     @synchronized(requestMgr) {
         
         if (request.serializerType == kTCHTTPRequestSerializerTypeHTTP) {
-            requestMgr.requestSerializer = [AFHTTPRequestSerializer serializer];
+            requestMgr.requestSerializer = AFHTTPRequestSerializer.serializer;
         } else if (request.serializerType == kTCHTTPRequestSerializerTypeJSON) {
-            requestMgr.requestSerializer = [AFJSONRequestSerializer serializer];
+            requestMgr.requestSerializer = AFJSONRequestSerializer.serializer;
         }
         
         
@@ -206,12 +206,12 @@
     __block NSURLSessionTask *task = nil;
     
     void (^successBlock)() = ^(NSURLSessionTask *task, id responseObject) {
-        NSAssert([NSThread isMainThread], @"not main thread");
+        NSAssert(NSThread.isMainThread, @"not main thread");
         request.rawResponseObject = responseObject;
         [self handleRequestResult:request success:YES error:nil];
     };
     void (^failureBlock)() = ^(NSURLSessionTask *task, NSError *error) {
-        NSAssert([NSThread isMainThread], @"not main thread");
+        NSAssert(NSThread.isMainThread, @"not main thread");
         [self handleRequestResult:request success:NO error:error];
     };
     
@@ -292,8 +292,6 @@
                     [request loadResumeData:^(NSData *data) {
                         AFHTTPSessionManager *requestMgr = self.requestManager;
                         @synchronized(requestMgr) {
-                            
-                            request.downloadProgress = [[NSProgress alloc] init];
                             if (nil != data) {
                                 task = [requestMgr downloadTaskWithResumeData:data progress:^(NSProgress * _Nonnull downloadProgress) {
                                     request.downloadProgress = downloadProgress;

@@ -21,6 +21,7 @@
     @private
     NSDictionary *_parametersForCachePathFilter;
     id _sensitiveDataForCachePathFilter;
+    NSString *_cacheFileName;
 }
 
 @dynamic isForceStart;
@@ -336,15 +337,24 @@
 
 - (NSString *)cacheFileName
 {
+    if (nil != _cacheFileName) {
+        return _cacheFileName;
+    }
+    
     NSString *requestUrl = nil;
     if (nil != self.requestAgent && [self.requestAgent respondsToSelector:@selector(buildRequestUrlForRequest:)]) {
         requestUrl = [self.requestAgent buildRequestUrlForRequest:self];
+    } else {
+        requestUrl = self.apiUrl;
     }
     NSParameterAssert(requestUrl);
 
     NSString *cacheKey = [NSString stringWithFormat:@"Method:%zd RequestUrl:%@ Parames:%@ Sensitive:%@", self.requestMethod, requestUrl, self.parametersForCachePathFilter, _sensitiveDataForCachePathFilter];
-
-    return [TCHTTPRequestHelper MD5_32:cacheKey];
+    _parametersForCachePathFilter = nil;
+    _sensitiveDataForCachePathFilter = nil;
+    _cacheFileName = [TCHTTPRequestHelper MD5_32:cacheKey];
+    
+    return _cacheFileName;
 }
 
 - (NSString *)cacheFilePath
