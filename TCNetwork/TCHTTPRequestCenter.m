@@ -97,6 +97,7 @@
     @synchronized(self) {
         if (nil == _requestManager) {
             _requestManager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:_sessionConfiguration];
+            _requestManager.requestSerializer.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
             [_requestManager.reachabilityManager startMonitoring];
             AFSecurityPolicy *policy = self.securityPolicy;
             if (nil != policy) {
@@ -164,13 +165,6 @@
     
     AFHTTPSessionManager *requestMgr = self.requestManager;
     @synchronized(requestMgr) {
-        
-        if (request.serializerType == kTCHTTPRequestSerializerTypeHTTP) {
-            requestMgr.requestSerializer = AFHTTPRequestSerializer.serializer;
-        } else if (request.serializerType == kTCHTTPRequestSerializerTypeJSON) {
-            requestMgr.requestSerializer = AFJSONRequestSerializer.serializer;
-        }
-        
         
         if (nil != self.acceptableContentTypes) {
             NSMutableSet *set = requestMgr.responseSerializer.acceptableContentTypes.mutableCopy;
@@ -285,8 +279,8 @@
                 };
                 
                 NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:downloadUrl]
-                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
-                                                        timeoutInterval:self.requestManager.requestSerializer.timeoutInterval];
+                                                            cachePolicy:requestMgr.requestSerializer.cachePolicy
+                                                        timeoutInterval:requestMgr.requestSerializer.timeoutInterval];
                 
                 if (request.shouldResumeDownload) {
                     [request loadResumeData:^(NSData *data) {

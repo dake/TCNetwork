@@ -11,12 +11,6 @@
 #import "TCHTTPRequestCenterProtocol.h"
 
 
-typedef NS_ENUM(NSInteger, TCHTTPRequestSerializerType) {
-    kTCHTTPRequestSerializerTypeHTTP = 0,
-    kTCHTTPRequestSerializerTypeJSON, // encodes parameters as JSON using `NSJSONSerialization`, setting the `Content-Type` of the encoded request to `application/json`
-};
-
-
 @protocol AFMultipartFormData;
 typedef void (^AFConstructingBlock)(id<AFMultipartFormData> formData);
 
@@ -56,7 +50,6 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequest : NSObject <TCHTTPRequestPr
 
 @property (nonatomic, assign) NSTimeInterval timeoutInterval; // default: 60s
 @property (nonatomic, assign) TCHTTPRequestMethod requestMethod;
-@property (nonatomic, assign) TCHTTPRequestSerializerType serializerType;
 
 
 - (instancetype)initWithMethod:(TCHTTPRequestMethod)method;
