@@ -122,8 +122,7 @@
                 });
             }
         });
-    }
-    else {
+    } else {
         [super requestResponded:isValid finish:finish clean:clean];
     }
 }
@@ -224,8 +223,16 @@
     }
     
     NSDictionary *attributes = [fileMngr attributesOfItemAtPath:path error:NULL];
+    if (nil == attributes || attributes.count < 1) {
+        return kTCHTTPCachedResponseStateExpired;
+    }
     
-    if (nil != attributes && (self.cacheTimeoutInterval < 0 || -attributes.fileModificationDate.timeIntervalSinceNow < self.cacheTimeoutInterval)) {
+    NSTimeInterval timeIntervalSinceNow = attributes.fileModificationDate.timeIntervalSinceNow;
+    if (timeIntervalSinceNow >= 0) { // deal with wrong system time
+        return kTCHTTPCachedResponseStateExpired;
+    }
+    
+    if (self.cacheTimeoutInterval < 0 || -timeIntervalSinceNow < self.cacheTimeoutInterval) {
         if (self.requestMethod == kTCHTTPRequestMethodDownload) {
             if (![fileMngr fileExistsAtPath:path]) {
                 return kTCHTTPCachedResponseStateNone;
@@ -233,9 +240,9 @@
         }
         
         return kTCHTTPCachedResponseStateValid;
-    } else {
-        return kTCHTTPCachedResponseStateExpired;
     }
+    
+    return kTCHTTPCachedResponseStateExpired;
 }
 
 - (void)cacheRequestCallbackWithoutFiring:(BOOL)notFire
@@ -369,14 +376,14 @@
     }
     
     NSParameterAssert(path);
-    if ([self createDiretoryForCachePath:path]) {
+    if ([self.class createDiretoryForCachePath:path]) {
         return [path stringByAppendingPathComponent:self.cacheFileName];
     }
     
     return nil;
 }
 
-- (BOOL)createDiretoryForCachePath:(NSString *)path
++ (BOOL)createDiretoryForCachePath:(NSString *)path
 {
     if (nil == path) {
         return NO;
