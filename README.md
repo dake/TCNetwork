@@ -16,6 +16,12 @@ Still using AFNetworking 2.x ? see [TCNetwork 1.0](https://github.com/dake/TCNet
 - Batch requests (see `TCHTTPBatchRequest`)
 - URL filter, replace part of URL, or append common parameter 
 
+## TODO
+
+- NSURLRequest cachePolicy extension to implenment cache request.
+
+- NSURLSession category extension without extra class, instead of TCNetwork classes.
+
 ## Contributors
 
 - [dake][dakeGithub]
@@ -27,6 +33,5 @@ TCNetwork is available under the MIT license. See the LICENSE file for more info
 <!-- external links -->
 
 [dakeGithub]:https://github.com/dake
-
 [YTKNetwork]:https://github.com/yuantiku/YTKNetwork
 [AFNetworking]:https://github.com/AFNetworking/AFNetworking
