@@ -22,6 +22,8 @@ Still using AFNetworking 2.x ? see [TCNetwork 1.0](https://github.com/dake/TCNet
 
 - NSURLSession category extension without extra class, instead of TCNetwork classes.
 
+- TCHTTPRequest as proxy only, cache logic extract to  NSURLRequestCachePolicy impl.
+
 ## Contributors
 
 - [dake][dakeGithub]
