@@ -45,7 +45,7 @@
             return nil;
         }
         self.requestArray = requests;
-        self.finishDic = [NSMutableDictionary dictionary];
+        self.finishDic = NSMutableDictionary.dictionary;
     }
     return self;
 }
@@ -156,6 +156,7 @@
     }
     return finished;
 }
+
 
 #pragma mark - Helper
 

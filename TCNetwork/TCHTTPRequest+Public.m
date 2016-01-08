@@ -23,7 +23,7 @@
     return [[TCHTTPCacheRequest alloc] initWithMethod:method];
 }
 
-+ (instancetype)batchRequestWithRequests:(NSArray *)requests
++ (instancetype)batchRequestWithRequests:(NSArray<__kindof TCHTTPRequest *> *)requests
 {
     return [TCHTTPBatchRequest requestWithRequests:requests];
 }

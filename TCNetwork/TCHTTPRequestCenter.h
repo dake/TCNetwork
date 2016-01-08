@@ -29,7 +29,7 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequestCenter : NSObject <TCHTTPReq
 - (instancetype)initWithBaseURL:(NSURL *)url sessionConfiguration:(NSURLSessionConfiguration *)configuration;
 - (AFSecurityPolicy *)securityPolicy;
 
-- (BOOL)addRequest:(TCHTTPRequest *)request error:(NSError **)error;
+- (BOOL)addRequest:(__kindof TCHTTPRequest *)request error:(NSError **)error;
 
 - (void)addObserver:(__unsafe_unretained id)observer forRequest:(id<TCHTTPRequestProtocol>)request;
 - (void)removeRequestObserver:(__unsafe_unretained id)observer forIdentifier:(id<NSCopying>)identifier;
@@ -46,7 +46,8 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequestCenter : NSObject <TCHTTPReq
 @property (nonatomic, strong) NSDictionary<__kindof NSString *, __kindof NSString *> *customHeaderValue;
 
 /**
- Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a basic authentication value with Base64-encoded username and password. This overwrites any existing value for this header.
+ Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a basic authentication value with Base64-encoded username and password. 
+ This overwrites any existing value for this header.
  */
 @property (nonatomic, copy) NSString *authorizationUsername;
 @property (nonatomic, copy) NSString *authorizationPassword;
@@ -56,10 +57,11 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequestCenter : NSObject <TCHTTPReq
 
 //
 // request method below, will not auto start
+//
 - (TCHTTPRequest *)requestWithMethod:(TCHTTPRequestMethod)method apiUrl:(NSString *)apiUrl host:(NSString *)host cache:(BOOL)cache;
 - (TCHTTPRequest *)requestWithMethod:(TCHTTPRequestMethod)method apiUrl:(NSString *)apiUrl host:(NSString *)host;
 - (TCHTTPRequest *)cacheRequestWithMethod:(TCHTTPRequestMethod)method apiUrl:(NSString *)apiUrl host:(NSString *)host;
 - (TCHTTPRequest *)requestForDownload:(NSString *)url to:(NSString *)dstPath cache:(BOOL)cache;
-- (TCHTTPRequest *)batchRequestWithRequests:(NSArray *)requests;
+- (TCHTTPRequest *)batchRequestWithRequests:(NSArray<__kindof TCHTTPRequest *> *)requests;
 
 @end

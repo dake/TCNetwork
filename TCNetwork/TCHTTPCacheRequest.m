@@ -61,11 +61,6 @@
     return [super responseObject];
 }
 
-- (NSDictionary *)parametersForCachePathFilter
-{
-    return _parametersForCachePathFilter ?: self.parameters;
-}
-
 - (void)setCachePathFilterWithRequestParameters:(NSDictionary *)parameters
                                   sensitiveData:(NSObject<NSCopying> *)sensitiveData;
 {
@@ -356,7 +351,7 @@
     }
     NSParameterAssert(requestUrl);
 
-    NSString *cacheKey = [NSString stringWithFormat:@"Method:%zd RequestUrl:%@ Parames:%@ Sensitive:%@", self.requestMethod, requestUrl, self.parametersForCachePathFilter, _sensitiveDataForCachePathFilter];
+    NSString *cacheKey = [NSString stringWithFormat:@"Method:%zd RequestUrl:%@ Parames:%@ Sensitive:%@", self.requestMethod, requestUrl, _parametersForCachePathFilter, _sensitiveDataForCachePathFilter];
     _parametersForCachePathFilter = nil;
     _sensitiveDataForCachePathFilter = nil;
     _cacheFileName = [TCHTTPRequestHelper MD5_32:cacheKey];

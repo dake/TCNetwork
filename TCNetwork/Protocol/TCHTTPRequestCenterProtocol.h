@@ -120,7 +120,7 @@ extern NSInteger const kTCHTTPRequestCacheNeverExpired;
 - (void)cachedResponseByForce:(BOOL)force result:(void(^)(id response, TCHTTPCachedResponseState state))result; // always nil
 
 
-// default: parameters = self.parameters, sensitiveData = nil
+// default: parameters = nil, sensitiveData = nil
 - (void)setCachePathFilterWithRequestParameters:(NSDictionary *)parameters
                                   sensitiveData:(NSObject<NSCopying> *)sensitiveData;
 
@@ -141,8 +141,8 @@ extern NSInteger const kTCHTTPRequestCacheNeverExpired;
 - (void)removeRequestObserver:(__unsafe_unretained id)observer forIdentifier:(id<NSCopying>)identifier;
 - (void)removeRequestObserver:(__unsafe_unretained id)observer;
 
-- (BOOL)canAddRequest:(TCHTTPRequest *)request error:(NSError **)error;
-- (BOOL)addRequest:(TCHTTPRequest *)request error:(NSError **)error;
+- (BOOL)canAddRequest:(__kindof TCHTTPRequest *)request error:(NSError **)error;
+- (BOOL)addRequest:(__kindof TCHTTPRequest *)request error:(NSError **)error;
 - (NSString *)buildRequestUrlForRequest:(id<TCHTTPRequestProtocol>)request;
 
 

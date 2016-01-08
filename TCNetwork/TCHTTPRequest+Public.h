@@ -12,6 +12,6 @@
 
 + (instancetype)requestWithMethod:(TCHTTPRequestMethod)method;
 + (instancetype)cacheRequestWithMethod:(TCHTTPRequestMethod)method;
-+ (instancetype)batchRequestWithRequests:(NSArray *)requests;
++ (instancetype)batchRequestWithRequests:(NSArray<__kindof TCHTTPRequest *> *)requests;
 
 @end

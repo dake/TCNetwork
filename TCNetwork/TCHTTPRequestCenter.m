@@ -125,7 +125,7 @@
 }
 
 
-- (BOOL)canAddRequest:(TCHTTPRequest *)request error:(NSError **)error
+- (BOOL)canAddRequest:(__kindof TCHTTPRequest *)request error:(NSError **)error
 {
     NSParameterAssert(request.observer);
     
@@ -157,7 +157,7 @@
     return YES;
 }
 
-- (BOOL)addRequest:(TCHTTPRequest *)request error:(NSError **)error
+- (BOOL)addRequest:(__kindof TCHTTPRequest *)request error:(NSError **)error
 {
     if (![self canAddRequest:request error:error]) {
         return NO;
@@ -557,7 +557,7 @@
     return request;
 }
 
-- (TCHTTPRequest *)batchRequestWithRequests:(NSArray *)requests
+- (TCHTTPRequest *)batchRequestWithRequests:(NSArray<__kindof TCHTTPRequest *> *)requests
 {
     NSParameterAssert(requests);
     TCHTTPRequest *request = [TCHTTPRequest batchRequestWithRequests:requests];

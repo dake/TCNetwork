@@ -15,7 +15,7 @@
 typedef void (^AFConstructingBlock)(id<AFMultipartFormData> formData);
 
 @class TCHTTPRequest;
-typedef void (^TCRequestResultBlockType)(TCHTTPRequest *request, BOOL success);
+typedef void (^TCRequestResultBlockType)(__kindof TCHTTPRequest *request, BOOL success);
 
 
 #pragma mark -

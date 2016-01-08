@@ -39,6 +39,12 @@
     [[YahooWeatherRequestCenter defaultCenter] removeRequestObserver:self];
 }
 
+- (IBAction)clearRequestCacheTapped:(UIButton *)sender
+{
+    [[DoubanRequestCenter defaultCenter] removeAllCachedResponse];
+    [[YahooWeatherRequestCenter defaultCenter] removeAllCachedResponse];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
