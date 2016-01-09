@@ -151,6 +151,7 @@ extern NSInteger const kTCHTTPRequestCacheNeverExpired;
 - (id<TCHTTPRequestProtocol>)requestForObserver:(__unsafe_unretained id)observer forIdentifier:(id)identifier;
 
 - (NSString *)cachePathForResponse;
+- (NSString *)cacheDomainForResponse;
 - (void)removeAllCachedResponse;
 
 - (id<TCHTTPResponseValidator>)responseValidatorForRequest:(id<TCHTTPRequestProtocol>)request;
