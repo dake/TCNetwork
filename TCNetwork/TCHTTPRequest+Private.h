@@ -15,7 +15,7 @@
 @property (nonatomic, strong, readwrite) NSProgress *downloadProgress;
 
 - (void)loadResumeData:(void(^)(NSData *data))finish;
-- (void)saveResumeData:(NSData *)data finish:(void(^)(BOOL success))finish;
+//- (void)saveResumeData:(NSData *)data finish:(void(^)(BOOL success))finish;
 - (void)clearCachedResumeData;
 
 @end

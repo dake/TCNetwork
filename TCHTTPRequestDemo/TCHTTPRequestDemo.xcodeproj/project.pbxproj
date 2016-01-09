@@ -29,6 +29,7 @@
 		B7606A431AD64977001461CA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7606A421AD64977001461CA /* Images.xcassets */; };
 		B7606A461AD64977001461CA /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7606A441AD64977001461CA /* LaunchScreen.xib */; };
 		B7606A521AD64977001461CA /* TCHTTPRequestDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B7606A511AD64977001461CA /* TCHTTPRequestDemoTests.m */; };
+		B7A92B171C4151990039461F /* NSURLSessionTask+TCResumeDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A92B161C4151990039461F /* NSURLSessionTask+TCResumeDownload.m */; };
 		B7C169881B2426F500E17602 /* TCBaseResponseValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C169871B2426F500E17602 /* TCBaseResponseValidator.m */; };
 /* End PBXBuildFile section */
 
@@ -90,6 +91,8 @@
 		B7606A4B1AD64977001461CA /* TCHTTPRequestDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TCHTTPRequestDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7606A501AD64977001461CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B7606A511AD64977001461CA /* TCHTTPRequestDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCHTTPRequestDemoTests.m; sourceTree = "<group>"; };
+		B7A92B151C4151990039461F /* NSURLSessionTask+TCResumeDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLSessionTask+TCResumeDownload.h"; sourceTree = "<group>"; };
+		B7A92B161C4151990039461F /* NSURLSessionTask+TCResumeDownload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLSessionTask+TCResumeDownload.m"; sourceTree = "<group>"; };
 		B7C169861B2426F500E17602 /* TCBaseResponseValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCBaseResponseValidator.h; sourceTree = "<group>"; };
 		B7C169871B2426F500E17602 /* TCBaseResponseValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCBaseResponseValidator.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -135,6 +138,8 @@
 		B75089C01AD671E6007867BC /* TCNetwork */ = {
 			isa = PBXGroup;
 			children = (
+				B7A92B151C4151990039461F /* NSURLSessionTask+TCResumeDownload.h */,
+				B7A92B161C4151990039461F /* NSURLSessionTask+TCResumeDownload.m */,
 				B715159C1C03F9B300E15862 /* TCHTTPRequest+Private.h */,
 				B715159D1C03F9B300E15862 /* TCHTTPRequest+Private.m */,
 				B75089C81AD671E6007867BC /* Protocol */,
@@ -357,6 +362,7 @@
 				B71515AD1C03FA3700E15862 /* AFHTTPSessionManager.m in Sources */,
 				B75089DD1AD671E6007867BC /* TCHTTPRequest+Public.m in Sources */,
 				B71515AE1C03FA3700E15862 /* AFNetworkReachabilityManager.m in Sources */,
+				B7A92B171C4151990039461F /* NSURLSessionTask+TCResumeDownload.m in Sources */,
 				B7606A3B1AD64977001461CA /* AppDelegate.m in Sources */,
 				B75089BF1AD65A62007867BC /* YahooWeatherRequestCenter.m in Sources */,
 				B71515B21C03FA3700E15862 /* AFURLSessionManager.m in Sources */,

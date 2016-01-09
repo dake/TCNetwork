@@ -14,6 +14,7 @@
 #import "TCHTTPRequest+Public.h"
 #import "TCHTTPRequest+Private.h"
 #import "TCBaseResponseValidator.h"
+#import "NSURLSessionTask+TCResumeDownload.h"
 
 
 @implementation TCHTTPRequestCenter
@@ -212,15 +213,7 @@
     void (^completionHandler)(NSURLResponse *response, NSURL *filePath, NSError *error) = ^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
         if (nil != error || nil == filePath) {
             if (request.shouldResumeDownload && nil != error) {
-                if ([error.domain isEqualToString:NSURLErrorDomain]) {
-                    NSData *resumeData = error.userInfo[NSURLSessionDownloadTaskResumeData];
-                    if (nil != resumeData) {
-                        [request saveResumeData:resumeData finish:^(BOOL success) {
-                            failureBlock(task, error);
-                        }];
-                        return;
-                    }
-                } else if ([error.domain isEqualToString:NSPOSIXErrorDomain] && 2 == error.code) {
+                if ([error.domain isEqualToString:NSPOSIXErrorDomain] && 2 == error.code) {
                     [request clearCachedResumeData];
                 }
             }
@@ -254,7 +247,11 @@
                     } destination:destination completionHandler:completionHandler];
                 }
             }
+            
             [self addTask:task toRequest:request];
+            [task tc_makePersistentResumeCapable];
+            task.tc_resumeIdentifier = request.downloadIdentifier;
+            task.tc_resumeCacheDirectory = request.downloadResumeCacheDirectory;
             [task resume];
         }];
         
@@ -265,6 +262,8 @@
             request.downloadProgress = downloadProgress;
         } destination:destination completionHandler:completionHandler];
         [self addTask:task toRequest:request];
+        task.tc_resumeIdentifier = request.downloadIdentifier;
+        task.tc_resumeCacheDirectory = request.downloadResumeCacheDirectory;
         [task resume];
     }
 }
