@@ -2,8 +2,8 @@
 //  TCHTTPRequest+Public.m
 //  TCKit
 //
-//  Created by cdk on 15/3/30.
-//  Copyright (c) 2015年 Dake. All rights reserved.
+//  Created by dake on 15/3/30.
+//  Copyright (c) 2015年 dake. All rights reserved.
 //
 
 #import "TCHTTPRequest+Public.h"

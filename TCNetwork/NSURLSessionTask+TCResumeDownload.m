@@ -1,5 +1,5 @@
 //
-//  NSURLSessionDownloadTask+TCHelper.m
+//  NSURLSessionTask+TCResumeDownload.m
 //  TCKit
 //
 //  Created by dake on 16/1/9.
@@ -46,7 +46,8 @@ static NSString *tc_md5_32(NSString *str)
 
 - (BOOL)tc_makePersistentResumeCapable
 {
-    if (![self isKindOfClass:NSURLSessionDownloadTask.class]) {
+    if (![self isKindOfClass:NSURLSessionDownloadTask.class] ||
+        ![self respondsToSelector:@selector(cancelByProducingResumeData:)]) {
         return NO;
     }
     
@@ -57,9 +58,10 @@ static NSString *tc_md5_32(NSString *str)
     });
     
     @synchronized(enbledClasses) {
-        if (![enbledClasses containsObject:self.class]) {
-            [self.class tc_swizzle:@selector(cancelByProducingResumeData:)];
-            [enbledClasses addObject:self.class];
+        Class klass = self.class;
+        if (![enbledClasses containsObject:klass]) {
+            [klass tc_swizzle:@selector(cancelByProducingResumeData:)];
+            [enbledClasses addObject:klass];
         }
     }
     
@@ -234,15 +236,25 @@ static NSString *tc_md5_32(NSString *str)
 {
     SEL bSelector = NSSelectorFromString([NSString stringWithFormat:@"tc_%@", NSStringFromSelector(aSelector)]);
     Method m1 = class_getInstanceMethod(self, aSelector);
-    Method m2 = class_getInstanceMethod(self, bSelector);
+    Method m2 = NULL;
+    if (NULL == m1) {
+        m1 = class_getClassMethod(self, aSelector);
+        m2 = class_getClassMethod(self, bSelector);
+    } else {
+        m2 = class_getInstanceMethod(self, bSelector);
+    }
+    
     const char *type = method_getTypeEncoding(m2);
     if (class_addMethod(self, aSelector, method_getImplementation(m2), method_getTypeEncoding(m2))) {
         if (NULL != m1) {
             class_replaceMethod(self, bSelector, method_getImplementation(m1), method_getTypeEncoding(m1));
         } else {
             char *rtType = method_copyReturnType(m2);
-            NSString *returnType = @(rtType);
-            free(rtType);
+            NSString *returnType = nil;
+            if (NULL != rtType) {
+                returnType = @(rtType);
+                free(rtType);
+            }
             
             IMP imp = NULL;
             if ([returnType isEqualToString:@"v"]) {
@@ -276,3 +288,5 @@ static NSString *tc_md5_32(NSString *str)
 #endif
 
 @end
+
+

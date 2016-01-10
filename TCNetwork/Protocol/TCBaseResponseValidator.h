@@ -2,8 +2,8 @@
 //  TCBaseResponseValidator.h
 //  TCKit
 //
-//  Created by ChenQi on 13-3-27.
-//  Copyright (c) 2013年 Dake. All rights reserved.
+//  Created by dake on 13-3-27.
+//  Copyright (c) 2013年 dake. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

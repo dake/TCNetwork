@@ -30,7 +30,7 @@ Still using AFNetworking 2.x ? see [TCNetwork 1.0](https://github.com/dake/TCNet
 
 ## License
 
-TCNetwork is available under the MIT license. See the LICENSE file for more info.
+TCNetwork is available under the [MIT license](LICENSE). See the [LICENSE](LICENSE) file for more info.
 
 <!-- external links -->
 

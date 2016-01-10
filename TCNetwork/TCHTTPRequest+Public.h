@@ -3,7 +3,7 @@
 //  TCKit
 //
 //  Created by cdk on 15/3/30.
-//  Copyright (c) 2015年 Dake. All rights reserved.
+//  Copyright (c) 2015年 dake. All rights reserved.
 //
 
 #import "TCHTTPRequest.h"
