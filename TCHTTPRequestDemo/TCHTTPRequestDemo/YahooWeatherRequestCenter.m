@@ -12,20 +12,10 @@ static NSString *const kHost = @"http://weather.yahooapis.com/";
 
 @implementation YahooWeatherRequestCenter
 
-+ (instancetype)defaultCenter
-{
-    static YahooWeatherRequestCenter *s_defaultCenter;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        s_defaultCenter = [[self alloc] initWithBaseURL:[NSURL URLWithString:kHost]];
-    });
-    
-    return s_defaultCenter;
-}
 
-- (instancetype)init
+- (instancetype)initWithBaseURL:(NSURL *)url sessionConfiguration:(NSURLSessionConfiguration *)configuration
 {
-    self = [super init];
+    self = [super initWithBaseURL:[NSURL URLWithString:kHost] sessionConfiguration:configuration];
     if (self) {
         self.timeoutInterval = 90.0f;
         // You can set urlFilter delegate here to self, or other.

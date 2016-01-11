@@ -30,13 +30,25 @@
 
 + (instancetype)defaultCenter
 {
-    static id s_defaultCenter;
+    static NSMutableDictionary *centers = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        s_defaultCenter = [[self alloc] initWithBaseURL:nil];
+        centers = NSMutableDictionary.dictionary;
     });
     
-    return s_defaultCenter;
+    TCHTTPRequestCenter *obj = nil;
+    @synchronized(centers) {
+        NSString *key = NSStringFromClass(self.class);
+        obj = centers[key];
+        if (nil == obj) {
+            obj = [[self alloc] initWithBaseURL:nil sessionConfiguration:nil];
+            if (nil != obj) {
+                centers[key] = obj;
+            }
+        }
+    }
+    
+    return obj;
 }
 
 - (Class)responseValidorClass
@@ -115,11 +127,6 @@
     }
     
     return _requestManager;
-}
-
-- (instancetype)initWithBaseURL:(NSURL *)url
-{
-    return [self initWithBaseURL:url sessionConfiguration:nil];
 }
 
 - (instancetype)initWithBaseURL:(NSURL *)url sessionConfiguration:(NSURLSessionConfiguration *)configuration

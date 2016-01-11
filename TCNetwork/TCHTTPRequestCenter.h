@@ -25,7 +25,6 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequestCenter : NSObject <TCHTTPReq
 @property (nonatomic, weak) id<TCHTTPRequestUrlFilter> urlFilter;
 
 + (instancetype)defaultCenter;
-- (instancetype)initWithBaseURL:(NSURL *)url;
 - (instancetype)initWithBaseURL:(NSURL *)url sessionConfiguration:(NSURLSessionConfiguration *)configuration;
 - (AFSecurityPolicy *)securityPolicy;
 

@@ -51,10 +51,10 @@ static NSString *tc_md5_32(NSString *str)
         return NO;
     }
     
-    static NSMutableArray *enbledClasses = nil;
+    static NSMutableSet *enbledClasses = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        enbledClasses = NSMutableArray.array;
+        enbledClasses = NSMutableSet.set;
     });
     
     @synchronized(enbledClasses) {
