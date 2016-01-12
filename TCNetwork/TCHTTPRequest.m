@@ -168,8 +168,9 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
 
 - (void)cancel
 {
-    if ((_requestTask.state != NSURLSessionTaskStateCanceling && _requestTask.state != NSURLSessionTaskStateCompleted) &&
-        !self.isCancelled) {
+    if (!self.isCancelled &&
+        _requestTask.state != NSURLSessionTaskStateCanceling &&
+        _requestTask.state != NSURLSessionTaskStateCompleted) {
         self.isCancelled = YES;
         
         if (self.requestMethod == kTCHTTPRequestMethodDownload && self.shouldResumeDownload &&

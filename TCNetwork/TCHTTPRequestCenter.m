@@ -202,15 +202,20 @@
             NSString *value = headerFieldValueDic[httpHeaderField];
             [requestMgr.requestSerializer setValue:value forHTTPHeaderField:httpHeaderField];
         }
-        
-        [self generateTaskFor:request];
     }
+    
+    [self generateTaskFor:request];
     
     return YES;
 }
 
 - (void)fireDownloadTaskFor:(TCHTTPRequest *)request downloadUrl:(NSString *)downloadUrl successBlock:(void (^)())successBlock failureBlock:(void (^)())failureBlock
 {
+    NSParameterAssert(request);
+    NSParameterAssert(downloadUrl);
+    NSParameterAssert(successBlock);
+    NSParameterAssert(failureBlock);
+    
     __block NSURLSessionTask *task = nil;
     
     NSURL * (^destination)(NSURL *targetPath, NSURLResponse *response) = ^(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
@@ -240,38 +245,31 @@
     
     if (request.shouldResumeDownload) {
         [request loadResumeData:^(NSData *data) {
-            AFHTTPSessionManager *requestMgr = self.requestManager;
-            @synchronized(requestMgr) {
-                if (nil != data) {
-                    task = [requestMgr downloadTaskWithResumeData:data progress:^(NSProgress * _Nonnull downloadProgress) {
-                        request.downloadProgress = downloadProgress;
-                    } destination:destination completionHandler:completionHandler];
-                }
-                
-                if (nil == task) {
-                    task = [requestMgr downloadTaskWithRequest:urlRequest progress:^(NSProgress * _Nonnull downloadProgress) {
-                        request.downloadProgress = downloadProgress;
-                    } destination:destination completionHandler:completionHandler];
-                }
+            if (nil != data) {
+                task = [requestMgr downloadTaskWithResumeData:data progress:^(NSProgress * _Nonnull downloadProgress) {
+                    request.downloadProgress = downloadProgress;
+                } destination:destination completionHandler:completionHandler];
             }
             
-            [self addTask:task toRequest:request];
+            if (nil == task) {
+                task = [requestMgr downloadTaskWithRequest:urlRequest progress:^(NSProgress * _Nonnull downloadProgress) {
+                    request.downloadProgress = downloadProgress;
+                } destination:destination completionHandler:completionHandler];
+            }
+            
             [task tc_makePersistentResumeCapable];
             task.tc_resumeIdentifier = request.downloadIdentifier;
             task.tc_resumeCacheDirectory = request.downloadResumeCacheDirectory;
-            [task resume];
+            [self addTask:task toRequest:request];
         }];
-        
-        return;
-        
     } else {
         task = [requestMgr downloadTaskWithRequest:urlRequest progress:^(NSProgress * _Nonnull downloadProgress) {
             request.downloadProgress = downloadProgress;
         } destination:destination completionHandler:completionHandler];
-        [self addTask:task toRequest:request];
+        
         task.tc_resumeIdentifier = request.downloadIdentifier;
         task.tc_resumeCacheDirectory = request.downloadResumeCacheDirectory;
-        [task resume];
+        [self addTask:task toRequest:request];
     }
 }
 
@@ -287,27 +285,7 @@
         NSAssert(NSThread.isMainThread, @"not main thread");
         [wSelf handleRequestResult:request success:NO error:error];
     };
-    
-    
-    NSURLSessionTask *task = nil;
-    
-    // if api build custom url request
-    NSURLRequest *customUrlRequest = request.customUrlRequest;
-    if (nil != customUrlRequest) {
-        AFHTTPSessionManager *requestMgr = self.requestManager;
-        @synchronized(requestMgr) {
-            task = [requestMgr dataTaskWithRequest:customUrlRequest completionHandler:^(NSURLResponse * __unused response, id responseObject, NSError *error) {
-                if (nil != error) {
-                    failureBlock(task, error);
-                } else {
-                    successBlock(task, responseObject);
-                }
-            }];
-        }
-        [task resume];
-        [self addTask:task toRequest:request];
-        return;
-    }
+
     
     NSString *url = [self buildRequestUrlForRequest:request];
     NSParameterAssert(url);
@@ -317,69 +295,79 @@
         param = [self.urlFilter filteredParamForParam:param];
     }
     
-    
+    NSURLSessionTask *task = nil;
     AFHTTPSessionManager *requestMgr = self.requestManager;
-    @synchronized(requestMgr) {
-        
-        switch (request.requestMethod) {
-                
-            case kTCHTTPRequestMethodDownload: {
-                NSParameterAssert(request.downloadDestinationPath);
-                NSString *downloadUrl = [TCHTTPRequestHelper urlString:url appendParameters:param];
-                NSParameterAssert(downloadUrl);
-                
-                if (downloadUrl.length < 1 || request.downloadDestinationPath.length < 1) {
-                    return;
-                }
-                
-                [self fireDownloadTaskFor:request downloadUrl:downloadUrl successBlock:successBlock failureBlock:failureBlock];
-                return;
+    
+    switch (request.requestMethod) {
+            
+        case kTCHTTPRequestMethodDownload: {
+            NSParameterAssert(request.downloadDestinationPath);
+            NSString *downloadUrl = [TCHTTPRequestHelper urlString:url appendParameters:param];
+            NSParameterAssert(downloadUrl);
+            
+            if (downloadUrl.length < 1 || request.downloadDestinationPath.length < 1) {
+                break;
             }
-                
-            case kTCHTTPRequestMethodGet: {
-                task = [requestMgr GET:url parameters:param progress:^(NSProgress * _Nonnull downloadProgress) {
-                    request.downloadProgress = downloadProgress;
+            
+            [self fireDownloadTaskFor:request downloadUrl:downloadUrl successBlock:successBlock failureBlock:failureBlock];
+            return;
+        }
+            
+        case kTCHTTPRequestMethodGet: {
+            task = [requestMgr GET:url parameters:param progress:^(NSProgress * _Nonnull downloadProgress) {
+                request.downloadProgress = downloadProgress;
+            } success:successBlock failure:failureBlock];
+            break;
+        }
+            
+        case kTCHTTPRequestMethodPost: {
+            
+            if (nil != request.constructingBodyBlock) {
+                task = [requestMgr POST:url parameters:param constructingBodyWithBlock:request.constructingBodyBlock progress:^(NSProgress * _Nonnull uploadProgress) {
+                    request.uploadProgress = uploadProgress;
                 } success:successBlock failure:failureBlock];
-                break;
+                request.constructingBodyBlock = nil;
+            } else {
+                task = [requestMgr POST:url parameters:param progress:^(NSProgress * _Nonnull uploadProgress) {
+                    request.uploadProgress = uploadProgress;
+                } success:successBlock failure:failureBlock];
             }
-                
-            case kTCHTTPRequestMethodPost: {
-                
-                if (nil != request.constructingBodyBlock) {
-                    task = [requestMgr POST:url parameters:param constructingBodyWithBlock:request.constructingBodyBlock progress:^(NSProgress * _Nonnull uploadProgress) {
-                        request.uploadProgress = uploadProgress;
-                    } success:successBlock failure:failureBlock];
-                    request.constructingBodyBlock = nil;
-                } else {
-                    task = [requestMgr POST:url parameters:param progress:^(NSProgress * _Nonnull uploadProgress) {
-                        request.uploadProgress = uploadProgress;
-                    } success:successBlock failure:failureBlock];
-                }
-                break;
+            break;
+        }
+            
+        case kTCHTTPRequestMethodHead: {
+            task = [requestMgr HEAD:url parameters:param success:successBlock failure:failureBlock];
+            break;
+        }
+            
+        case kTCHTTPRequestMethodPut: {
+            task = [requestMgr PUT:url parameters:param success:successBlock failure:failureBlock];
+            break;
+        }
+            
+        case kTCHTTPRequestMethodDelete: {
+            task = [requestMgr DELETE:url parameters:param success:successBlock failure:failureBlock];
+            break;
+        }
+            
+        case kTCHTTPRequestMethodPatch: {
+            task = [requestMgr PATCH:url parameters:param success:successBlock failure:failureBlock];
+            break;
+        }
+            
+        default: {
+            // if api build custom url request
+            NSURLRequest *customUrlRequest = request.customUrlRequest;
+            if (nil != customUrlRequest) {
+                task = [requestMgr dataTaskWithRequest:customUrlRequest completionHandler:^(NSURLResponse * __unused response, id responseObject, NSError *error) {
+                    if (nil != error) {
+                        failureBlock(task, error);
+                    } else {
+                        successBlock(task, responseObject);
+                    }
+                }];
             }
-                
-            case kTCHTTPRequestMethodHead: {
-                task = [requestMgr HEAD:url parameters:param success:successBlock failure:failureBlock];
-                break;
-            }
-                
-            case kTCHTTPRequestMethodPut: {
-                task = [requestMgr PUT:url parameters:param success:successBlock failure:failureBlock];
-                break;
-            }
-                
-            case kTCHTTPRequestMethodDelete: {
-                task = [requestMgr DELETE:url parameters:param success:successBlock failure:failureBlock];
-                break;
-            }
-                
-            case kTCHTTPRequestMethodPatch: {
-                task = [requestMgr PATCH:url parameters:param success:successBlock failure:failureBlock];
-                break;
-            }
-                
-            default:
-                break;
+            break;
         }
     }
     
@@ -391,8 +379,10 @@
     if (nil != task) {
         request.requestTask = task;
         request.state = kTCHTTPRequestStateExecuting;
-        // add to pool
         [self addObserver:request.observer forRequest:request];
+        if (task.state == NSURLSessionTaskStateSuspended) {
+            [task resume];
+        }
     } else {
         if (nil != request.responseValidator) {
             request.responseValidator.error = [NSError errorWithDomain:NSStringFromClass(request.class)
@@ -483,10 +473,8 @@
 {
     NSString *queryUrl = request.apiUrl;
     
-    if (nil != self.urlFilter) {
-        if ([self.urlFilter respondsToSelector:@selector(filteredUrlForUrl:)]) {
-            queryUrl = [self.urlFilter filteredUrlForUrl:queryUrl];
-        }
+    if (nil != self.urlFilter && [self.urlFilter respondsToSelector:@selector(filteredUrlForUrl:)]) {
+        queryUrl = [self.urlFilter filteredUrlForUrl:queryUrl];
     }
     
     if ([queryUrl.lowercaseString hasPrefix:@"http"]) {
@@ -583,6 +571,10 @@
 - (TCHTTPRequest *)batchRequestWithRequests:(NSArray<__kindof TCHTTPRequest *> *)requests
 {
     NSParameterAssert(requests);
+    if (requests.count < 1) {
+        return nil;
+    }
+    
     TCHTTPRequest *request = [TCHTTPRequest batchRequestWithRequests:requests];
     request.requestAgent = self;
     
