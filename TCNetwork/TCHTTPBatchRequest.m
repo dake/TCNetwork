@@ -101,7 +101,7 @@
 
 - (void)cancel
 {
-    if (self.isCancelled) {
+    if (self.isCancelled || self.state != kTCHTTPRequestStateExecuting) {
         return;
     }
     
@@ -122,12 +122,13 @@
 {
     self.finishDic[@((NSUInteger)request)] = @(success);
     if (success) {
-        
-        if ([self checkFinished]) {
-            [self requestCallback:YES];
+        if (self.allRequestFinished) {
+            // called in next runloop to avoid resultBlock = nil of sub request;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self requestCallback:YES];
+            });
         }
     } else {
-
         [self cancel];
         [self requestCallback:NO];
     }
@@ -136,15 +137,16 @@
 - (void)requestCallback:(BOOL)isValid
 {
     self.state = kTCHTTPRequestStateFinished;
-    // remove from pool
-    if (self.isRetainByRequestPool) {
-        [self.requestAgent removeRequestObserver:self.observer forIdentifier:self.requestIdentifier];
-    }
-    
-    [self requestResponded:isValid finish:nil clean:YES];
+    __weak typeof(self) wSelf = self;
+    [self requestResponded:isValid finish:^{
+        // remove from pool
+        if (wSelf.isRetainByRequestPool) {
+            [wSelf.requestAgent removeRequestObserver:wSelf.observer forIdentifier:wSelf.requestIdentifier];
+        }
+    } clean:YES];
 }
 
-- (BOOL)checkFinished
+- (BOOL)allRequestFinished
 {
     BOOL finished = YES;
     for (TCHTTPRequest *request in self.requestArray) {

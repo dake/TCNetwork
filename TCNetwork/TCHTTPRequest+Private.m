@@ -26,7 +26,7 @@ static NSString *const kNSURLSessionResumeInfoLocalPath = @"NSURLSessionResumeIn
     }
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         @autoreleasepool {
-            NSData *data = [NSURLSessionDownloadTask tc_resumeDataWithIdentifier:self.downloadIdentifier inDirectory:self.downloadResumeCacheDirectory];
+            NSData *data = [NSURLSessionTask tc_resumeDataWithIdentifier:self.downloadIdentifier inDirectory:self.downloadResumeCacheDirectory];
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 finish(data);

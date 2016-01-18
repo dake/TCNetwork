@@ -306,7 +306,7 @@
             NSParameterAssert(downloadUrl);
             
             if (downloadUrl.length < 1 || request.downloadDestinationPath.length < 1) {
-                break;
+                break; // !!!: break here, no return
             }
             
             [self fireDownloadTaskFor:request downloadUrl:downloadUrl successBlock:successBlock failureBlock:failureBlock];
@@ -356,7 +356,7 @@
         }
             
         default: {
-            // if api build custom url request
+            // build custom url request
             NSURLRequest *customUrlRequest = request.customUrlRequest;
             if (nil != customUrlRequest) {
                 task = [requestMgr dataTaskWithRequest:customUrlRequest completionHandler:^(NSURLResponse * __unused response, id responseObject, NSError *error) {
@@ -502,30 +502,31 @@
 
 - (void)handleRequestResult:(id<TCHTTPRequestProtocol>)request success:(BOOL)success error:(NSError *)error
 {
+    __weak typeof(self) wSelf = self;
     dispatch_block_t block = ^{
         request.state = kTCHTTPRequestStateFinished;
         [request requestResponseReset];
         
         BOOL isValid = success;
-        
-        if (nil != request.responseValidator) {
+        id<TCHTTPResponseValidator> validator = request.responseValidator;
+        if (nil != validator) {
             if (isValid) {
-                if ([request.responseValidator respondsToSelector:@selector(validateHTTPResponse:fromCache:)]) {
-                    isValid = [request.responseValidator validateHTTPResponse:request.responseObject fromCache:NO];
+                if ([validator respondsToSelector:@selector(validateHTTPResponse:fromCache:)]) {
+                    isValid = [validator validateHTTPResponse:request.responseObject fromCache:NO];
                 }
             } else {
                 
-                if ([request.responseValidator respondsToSelector:@selector(reset)]) {
-                    [request.responseValidator reset];
+                if ([validator respondsToSelector:@selector(reset)]) {
+                    [validator reset];
                 }
-                request.responseValidator.error = error;
+                validator.error = error;
             }
         }
         
         [request requestResponded:isValid finish:^{
             // remove from pool
             if (request.isRetainByRequestPool) {
-                [self removeRequestObserver:request.observer forIdentifier:request.requestIdentifier];
+                [wSelf removeRequestObserver:request.observer forIdentifier:request.requestIdentifier];
             }
         } clean:YES];
     };

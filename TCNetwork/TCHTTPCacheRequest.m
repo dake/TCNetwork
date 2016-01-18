@@ -105,7 +105,11 @@
             @autoreleasepool {
                 __strong typeof(wSelf) sSelf = wSelf;
                 
-                if (sSelf.requestMethod != kTCHTTPRequestMethodDownload && sSelf.shouldCacheResponse && sSelf.cacheTimeoutInterval != 0 && sSelf.validateResponseObjectForCache) {
+                if (sSelf.requestMethod != kTCHTTPRequestMethodDownload &&
+                    sSelf.shouldCacheResponse &&
+                    sSelf.cacheTimeoutInterval != 0 &&
+                    sSelf.validateResponseObjectForCache) {
+                    
                     NSString *path = sSelf.cacheFilePath;
                     if (nil != path && ![NSKeyedArchiver archiveRootObject:sSelf.responseObject toFile:path]) {
                         NSAssert(false, @"write response failed.");
@@ -191,7 +195,8 @@
     if (cacheState == kTCHTTPCachedResponseStateValid || (force && cacheState != kTCHTTPCachedResponseStateNone)) {
         __weak typeof(self) wSelf = self;
         [self cachedResponseWithoutValidate:^(id response) {
-            if (nil != response && nil != wSelf.responseValidator && [wSelf.responseValidator respondsToSelector:@selector(validateHTTPResponse:fromCache:)]) {
+            if (nil != response && nil != wSelf.responseValidator &&
+                [wSelf.responseValidator respondsToSelector:@selector(validateHTTPResponse:fromCache:)]) {
                 [wSelf.responseValidator validateHTTPResponse:response fromCache:YES];
             }
             
@@ -351,7 +356,8 @@
     }
     NSParameterAssert(requestUrl);
 
-    NSString *cacheKey = [NSString stringWithFormat:@"Method:%zd RequestUrl:%@ Parames:%@ Sensitive:%@", self.requestMethod, requestUrl, _parametersForCachePathFilter, _sensitiveDataForCachePathFilter];
+    static NSString *const s_fmt = @"Method:%zd RequestUrl:%@ Parames:%@ Sensitive:%@";
+    NSString *cacheKey = [NSString stringWithFormat:s_fmt, self.requestMethod, requestUrl, _parametersForCachePathFilter, _sensitiveDataForCachePathFilter];
     _parametersForCachePathFilter = nil;
     _sensitiveDataForCachePathFilter = nil;
     _cacheFileName = [TCHTTPRequestHelper MD5_32:cacheKey];

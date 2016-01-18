@@ -168,19 +168,22 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
 
 - (void)cancel
 {
-    if (!self.isCancelled &&
-        _requestTask.state != NSURLSessionTaskStateCanceling &&
-        _requestTask.state != NSURLSessionTaskStateCompleted) {
-        self.isCancelled = YES;
-        
-        if (self.requestMethod == kTCHTTPRequestMethodDownload && self.shouldResumeDownload &&
-            [_requestTask isKindOfClass:NSURLSessionDownloadTask.class] && [_requestTask respondsToSelector:@selector(cancelByProducingResumeData:)]) {
-            [(NSURLSessionDownloadTask *)_requestTask cancelByProducingResumeData:^(NSData * _Nullable resumeData) {
-                // not in main thread
-            }];
-        } else {
-            [_requestTask cancel];
-        }
+    if (self.isCancelled ||
+        nil == _requestTask ||
+        _requestTask.state == NSURLSessionTaskStateCanceling ||
+        _requestTask.state == NSURLSessionTaskStateCompleted) {
+        return;
+    }
+    
+    self.isCancelled = YES;
+    
+    if (self.requestMethod == kTCHTTPRequestMethodDownload && self.shouldResumeDownload &&
+        [_requestTask isKindOfClass:NSURLSessionDownloadTask.class] && [_requestTask respondsToSelector:@selector(cancelByProducingResumeData:)]) {
+        [(NSURLSessionDownloadTask *)_requestTask cancelByProducingResumeData:^(NSData * _Nullable resumeData) {
+            // not in main thread
+        }];
+    } else {
+        [_requestTask cancel];
     }
 }
 
