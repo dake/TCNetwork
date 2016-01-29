@@ -209,23 +209,23 @@ static NSString *tc_md5_32(NSString *str)
             
             IMP imp = NULL;
             if ([returnType isEqualToString:@"v"]) {
-                imp = imp_implementationWithBlock(^(){});
+                imp = imp_implementationWithBlock(^{});
             } else if ([returnType hasPrefix:@"@"]) {
-                imp = imp_implementationWithBlock(^(){return nil;});
+                imp = imp_implementationWithBlock(^{return nil;});
             } else if ([returnType isEqualToString:@(@encode(CGPoint))]) {
-                imp = imp_implementationWithBlock(^(){return CGPointZero;});
+                imp = imp_implementationWithBlock(^{return CGPointZero;});
             } else if ([returnType isEqualToString:@(@encode(CGSize))]) {
-                imp = imp_implementationWithBlock(^(){return CGSizeZero;});
+                imp = imp_implementationWithBlock(^{return CGSizeZero;});
             } else if ([returnType isEqualToString:@(@encode(CGRect))]) {
-                imp = imp_implementationWithBlock(^(){return CGRectZero;});
+                imp = imp_implementationWithBlock(^{return CGRectZero;});
             } else if ([returnType isEqualToString:@(@encode(CGAffineTransform))]) {
-                imp = imp_implementationWithBlock(^(){return CGAffineTransformIdentity;});
+                imp = imp_implementationWithBlock(^{return CGAffineTransformIdentity;});
             } else if ([returnType isEqualToString:@(@encode(UIEdgeInsets))]) {
-                imp = imp_implementationWithBlock(^(){return UIEdgeInsetsZero;});
+                imp = imp_implementationWithBlock(^{return UIEdgeInsetsZero;});
             } else if ([returnType isEqualToString:@(@encode(NSRange))]) {
-                imp = imp_implementationWithBlock(^(){return NSMakeRange(NSNotFound, 0);});
+                imp = imp_implementationWithBlock(^{return NSMakeRange(NSNotFound, 0);});
             } else {
-                imp = imp_implementationWithBlock(^(){return 0;});
+                imp = imp_implementationWithBlock(^{return 0;});
             }
             
             class_replaceMethod(self, bSelector, imp, type);
