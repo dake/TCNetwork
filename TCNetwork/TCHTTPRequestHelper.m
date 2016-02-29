@@ -7,7 +7,10 @@
 //
 
 #import "TCHTTPRequestHelper.h"
+
+#ifndef __TCKit__
 #import <CommonCrypto/CommonDigest.h>
+#endif
 
 
 @implementation TCHTTPRequestHelper
@@ -33,6 +36,7 @@
 
 + (NSString *)MD5_32:(NSString *)str
 {
+#ifndef __TCKit__
     if (str.length < 1) {
         return nil;
     }
@@ -48,12 +52,19 @@
     }
     
     return outputString;
+#else
+    return str.MD5_32;
+#endif
 }
 
 + (NSString *)MD5_16:(NSString *)str
 {
+#ifndef __TCKit__
     NSString *value = [self MD5_32:str];
     return nil != value ? [value substringWithRange:NSMakeRange(8, 16)] : value;
+#else
+    return str.MD5_16;
+#endif
 }
 
 

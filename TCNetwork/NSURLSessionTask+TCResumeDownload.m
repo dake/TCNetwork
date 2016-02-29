@@ -50,17 +50,17 @@ static NSString *tc_md5_32(NSString *str)
         return NO;
     }
     
-    static NSMutableSet *enbledClasses = nil;
+    static NSMutableSet *enabledClasses = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        enbledClasses = NSMutableSet.set;
+        enabledClasses = NSMutableSet.set;
     });
     
-    @synchronized(enbledClasses) {
+    @synchronized(enabledClasses) {
         Class klass = self.class;
-        if (![enbledClasses containsObject:klass]) {
+        if (![enabledClasses containsObject:klass]) {
             [klass tc_swizzle:@selector(cancelByProducingResumeData:)];
-            [enbledClasses addObject:klass];
+            [enabledClasses addObject:klass];
         }
     }
     

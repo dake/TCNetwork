@@ -9,10 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "TCHTTPResponseValidator.h"
 #import "TCHTTPRequestCenterProtocol.h"
+#import "TCHTTPCachePolicy.h"
 
-
-@protocol AFMultipartFormData;
-typedef void (^AFConstructingBlock)(id<AFMultipartFormData> formData);
 
 @class TCHTTPRequest;
 typedef void (^TCRequestResultBlockType)(__kindof TCHTTPRequest *request, BOOL success);
@@ -50,6 +48,7 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequest : NSObject <TCHTTPRequestPr
 
 @property (nonatomic, assign) NSTimeInterval timeoutInterval; // default: 60s
 @property (nonatomic, assign) TCHTTPRequestMethod requestMethod;
+@property (nonatomic, strong, readonly) TCHTTPCachePolicy *cachePolicy;
 
 
 - (instancetype)initWithMethod:(TCHTTPRequestMethod)method;
@@ -82,11 +81,11 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequest : NSObject <TCHTTPRequestPr
 - (id)responseObject;
 
 
-
 #pragma mark - Upload
 
 @property (nonatomic, copy) AFConstructingBlock constructingBodyBlock;
 @property (nonatomic, strong, readonly) NSProgress *uploadProgress;
+
 
 #pragma mark - Download
 

@@ -11,7 +11,7 @@
 @interface TCHTTPRequest (Public)
 
 + (instancetype)requestWithMethod:(TCHTTPRequestMethod)method;
-+ (instancetype)cacheRequestWithMethod:(TCHTTPRequestMethod)method;
++ (instancetype)cacheRequestWithMethod:(TCHTTPRequestMethod)method cachePolicy:(TCHTTPCachePolicy *)policy;
 + (instancetype)batchRequestWithRequests:(NSArray<__kindof TCHTTPRequest *> *)requests;
 
 @end

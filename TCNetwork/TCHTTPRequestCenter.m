@@ -505,7 +505,6 @@
     __weak typeof(self) wSelf = self;
     dispatch_block_t block = ^{
         request.state = kTCHTTPRequestStateFinished;
-        [request requestResponseReset];
         
         BOOL isValid = success;
         id<TCHTTPResponseValidator> validator = request.responseValidator;
@@ -538,30 +537,17 @@
     }
 }
 
-#pragma mark - Making HTTP Requests
 
-- (TCHTTPRequest *)requestWithMethod:(TCHTTPRequestMethod)method apiUrl:(NSString *)apiUrl host:(NSString *)host cache:(BOOL)cache
-{
-    if (cache) {
-        return [self cacheRequestWithMethod:method apiUrl:apiUrl host:host];
-    } else {
-        return [self requestWithMethod:method apiUrl:apiUrl host:host];
-    }
-}
+#pragma mark - Making HTTP Requests
 
 - (TCHTTPRequest *)requestWithMethod:(TCHTTPRequestMethod)method apiUrl:(NSString *)apiUrl host:(NSString *)host
 {
-    TCHTTPRequest *request = [TCHTTPRequest requestWithMethod:method];
-    request.requestAgent = self;
-    request.apiUrl = apiUrl;
-    request.baseUrl = host;
-    
-    return request;
+    return [self requestWithMethod:method cachePolicy:nil apiUrl:apiUrl host:host];
 }
 
-- (TCHTTPRequest *)cacheRequestWithMethod:(TCHTTPRequestMethod)method apiUrl:(NSString *)apiUrl host:(NSString *)host
+- (TCHTTPRequest *)requestWithMethod:(TCHTTPRequestMethod)method cachePolicy:(TCHTTPCachePolicy *)policy apiUrl:(NSString *)apiUrl host:(NSString *)host
 {
-    TCHTTPRequest *request = [TCHTTPRequest cacheRequestWithMethod:method];
+    TCHTTPRequest *request = nil == policy ? [TCHTTPRequest requestWithMethod:method] : [TCHTTPRequest cacheRequestWithMethod:method cachePolicy:policy];
     request.requestAgent = self;
     request.apiUrl = apiUrl;
     request.baseUrl = host;
@@ -582,7 +568,7 @@
     return request;
 }
 
-- (TCHTTPRequest *)requestForDownload:(NSString *)url to:(NSString *)dstPath cache:(BOOL)cache
+- (TCHTTPRequest *)requestForDownload:(NSString *)url to:(NSString *)dstPath cachePolicy:(TCHTTPCachePolicy *)policy
 {
     NSParameterAssert(url);
     NSParameterAssert(dstPath);
@@ -591,7 +577,7 @@
         return nil;
     }
     
-    TCHTTPRequest *request = [self requestWithMethod:kTCHTTPRequestMethodDownload apiUrl:url host:nil cache:cache];
+    TCHTTPRequest *request = [self requestWithMethod:kTCHTTPRequestMethodDownload cachePolicy:policy apiUrl:url host:nil];
     request.downloadDestinationPath = dstPath;
     
     return request;

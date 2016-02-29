@@ -8,28 +8,22 @@
 
 #import "TCHTTPRequest.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPCacheRequest : TCHTTPRequest
 
-@property (nonatomic, assign) BOOL shouldIgnoreCache; // default: NO
-@property (nonatomic, assign) BOOL shouldCacheResponse; // default: YES
-@property (nonatomic, assign) NSTimeInterval cacheTimeoutInterval; // default: 0, expired anytime, < 0: never expired
 @property (nonatomic, assign) BOOL isForceStart;
-// should return expired cache or not
-@property (nonatomic, assign) BOOL shouldExpiredCacheValid; // default: NO
 
++ (instancetype)requestWithMethod:(TCHTTPRequestMethod)method cachePolicy:(TCHTTPCachePolicy *)policy;
+- (instancetype)initWithMethod:(TCHTTPRequestMethod)method cachePolicy:(TCHTTPCachePolicy *)policy;
 
 /**
  @brief	fire a request regardless of cache available
  if cache is available, callback then fire a request.
  */
 - (BOOL)forceStart:(NSError **)error;
-
-- (BOOL)isDataFromCache;
-- (TCHTTPCachedResponseState)cacheState;
 - (void)cachedResponseByForce:(BOOL)force result:(void(^)(id response, TCHTTPCachedResponseState state))result;
 
-// default: parameters = self.parameters, sensitiveData = nil
-- (void)setCachePathFilterWithRequestParameters:(NSDictionary *)parameters
-                                  sensitiveData:(id)sensitiveData;
-
 @end
+
+NS_ASSUME_NONNULL_END

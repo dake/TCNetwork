@@ -14,6 +14,7 @@
 		B71515B01C03FA3700E15862 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = B71515A81C03FA3700E15862 /* AFURLRequestSerialization.m */; };
 		B71515B11C03FA3700E15862 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = B71515AA1C03FA3700E15862 /* AFURLResponseSerialization.m */; };
 		B71515B21C03FA3700E15862 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B71515AC1C03FA3700E15862 /* AFURLSessionManager.m */; };
+		B738BE8B1C8444C3001B1643 /* TCHTTPCachePolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = B738BE8A1C8444C3001B1643 /* TCHTTPCachePolicy.m */; };
 		B75089BF1AD65A62007867BC /* YahooWeatherRequestCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B75089BE1AD65A62007867BC /* YahooWeatherRequestCenter.m */; };
 		B75089DB1AD671E6007867BC /* TCHTTPBatchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B75089CD1AD671E6007867BC /* TCHTTPBatchRequest.m */; };
 		B75089DC1AD671E6007867BC /* TCHTTPCacheRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B75089CF1AD671E6007867BC /* TCHTTPCacheRequest.m */; };
@@ -59,6 +60,8 @@
 		B71515AA1C03FA3700E15862 /* AFURLResponseSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLResponseSerialization.m; sourceTree = "<group>"; };
 		B71515AB1C03FA3700E15862 /* AFURLSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLSessionManager.h; sourceTree = "<group>"; };
 		B71515AC1C03FA3700E15862 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLSessionManager.m; sourceTree = "<group>"; };
+		B738BE891C8444C3001B1643 /* TCHTTPCachePolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPCachePolicy.h; sourceTree = "<group>"; };
+		B738BE8A1C8444C3001B1643 /* TCHTTPCachePolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPCachePolicy.m; sourceTree = "<group>"; };
 		B75089BD1AD65A62007867BC /* YahooWeatherRequestCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YahooWeatherRequestCenter.h; sourceTree = "<group>"; };
 		B75089BE1AD65A62007867BC /* YahooWeatherRequestCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YahooWeatherRequestCenter.m; sourceTree = "<group>"; };
 		B75089C91AD671E6007867BC /* TCHTTPRequestCenterProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequestCenterProtocol.h; sourceTree = "<group>"; };
@@ -138,6 +141,8 @@
 		B75089C01AD671E6007867BC /* TCNetwork */ = {
 			isa = PBXGroup;
 			children = (
+				B738BE891C8444C3001B1643 /* TCHTTPCachePolicy.h */,
+				B738BE8A1C8444C3001B1643 /* TCHTTPCachePolicy.m */,
 				B7A92B151C4151990039461F /* NSURLSessionTask+TCResumeDownload.h */,
 				B7A92B161C4151990039461F /* NSURLSessionTask+TCResumeDownload.m */,
 				B715159C1C03F9B300E15862 /* TCHTTPRequest+Private.h */,
@@ -362,6 +367,7 @@
 				B71515AD1C03FA3700E15862 /* AFHTTPSessionManager.m in Sources */,
 				B75089DD1AD671E6007867BC /* TCHTTPRequest+Public.m in Sources */,
 				B71515AE1C03FA3700E15862 /* AFNetworkReachabilityManager.m in Sources */,
+				B738BE8B1C8444C3001B1643 /* TCHTTPCachePolicy.m in Sources */,
 				B7A92B171C4151990039461F /* NSURLSessionTask+TCResumeDownload.m in Sources */,
 				B7606A3B1AD64977001461CA /* AppDelegate.m in Sources */,
 				B75089BF1AD65A62007867BC /* YahooWeatherRequestCenter.m in Sources */,

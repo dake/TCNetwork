@@ -37,7 +37,8 @@ typedef NS_ENUM(NSInteger, TCHTTPRequestMethod) {
 };
 
 
-extern NSInteger const kTCHTTPRequestCacheNeverExpired;
+@protocol AFMultipartFormData;
+typedef void (^AFConstructingBlock)(id<AFMultipartFormData> formData);
 
 
 @protocol TCHTTPRequestDelegate;
@@ -89,19 +90,13 @@ extern NSInteger const kTCHTTPRequestCacheNeverExpired;
 - (id<NSCoding>)responseObject;
 
 // for override
-- (void)requestResponseReset;
 - (void)requestResponded:(BOOL)isValid finish:(dispatch_block_t)finish clean:(BOOL)clean;
 
 
 #pragma mark - Cache
 
 @property (nonatomic, assign) BOOL shouldIgnoreCache; // always: YES
-@property (nonatomic, assign) BOOL shouldCacheResponse; // always: NO
-@property (nonatomic, assign) NSTimeInterval cacheTimeoutInterval; // always: 0, expired anytime
 @property (nonatomic, assign) BOOL isForceStart;
-// should return expired cache or not
-@property (nonatomic, assign) BOOL shouldExpiredCacheValid; // default: NO
-@property (nonatomic, assign) BOOL shouldCacheEmptyResponse; // default: YES, empty means: empty string, array, dictionary
 
 
 /**
@@ -114,20 +109,27 @@ extern NSInteger const kTCHTTPRequestCacheNeverExpired;
  */
 - (BOOL)forceStart:(NSError **)error;
 
-- (BOOL)isDataFromCache;
-- (BOOL)isCacheValid;
-- (TCHTTPCachedResponseState)cacheState;
 - (void)cachedResponseByForce:(BOOL)force result:(void(^)(id response, TCHTTPCachedResponseState state))result; // always nil
-
-
-// default: parameters = nil, sensitiveData = nil
-- (void)setCachePathFilterWithRequestParameters:(NSDictionary *)parameters
-                                  sensitiveData:(NSObject<NSCopying> *)sensitiveData;
 
 
 #pragma mark - Batch
 
 @property (nonatomic, copy, readonly) NSArray<id<TCHTTPRequestProtocol>> *requestArray;
+
+
+#pragma mark - Upload
+
+@property (nonatomic, copy) AFConstructingBlock constructingBodyBlock;
+@property (nonatomic, strong, readonly) NSProgress *uploadProgress;
+
+
+#pragma mark - Download
+
+@property (nonatomic, assign) BOOL shouldResumeDownload; // default: NO
+@property (nonatomic, copy) NSString *downloadIdentifier; // such as hash string, but can not be file system path! if nil, apiUrl's md5 used.
+@property (nonatomic, copy) NSString *downloadResumeCacheDirectory; // if nil, tmp directory used.
+@property (nonatomic, copy) NSString *downloadDestinationPath;
+@property (nonatomic, strong, readonly) NSProgress *downloadProgress;
 
 @end
 

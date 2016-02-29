@@ -105,7 +105,9 @@
 #pragma mark - Batch
     
     YahooWeatherRequestCenter *center = [YahooWeatherRequestCenter defaultCenter];
-    TCHTTPRequest *request1 = [center cacheRequestWithMethod:kTCHTTPRequestMethodGet apiUrl:@"forecastrss" host:nil];
+    TCHTTPCachePolicy *policy = [[TCHTTPCachePolicy alloc] init];
+    policy.cacheTimeoutInterval = 5 * 60;
+    TCHTTPRequest *request1 = [center requestWithMethod:kTCHTTPRequestMethodGet cachePolicy:policy apiUrl:@"forecastrss" host:nil];
     request1.parameters = @{@"w": kBeijingW, @"u": @"c"};
     
     TCHTTPRequest *request2 = [center requestWithMethod:kTCHTTPRequestMethodGet apiUrl:@"ig/api" host:@"http://www.google.com/"];

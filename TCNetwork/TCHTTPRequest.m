@@ -10,9 +10,6 @@
 #import "TCHTTPRequestHelper.h"
 
 
-NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
-
-
 @interface TCHTTPRequest ()
 
 @property (atomic, assign, readwrite) BOOL isCancelled;
@@ -30,11 +27,6 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
 }
 
 @dynamic shouldIgnoreCache;
-@dynamic shouldCacheResponse;
-@dynamic cacheTimeoutInterval;
-@dynamic shouldExpiredCacheValid;
-@dynamic shouldCacheEmptyResponse;
-
 @synthesize isForceStart = _isForceStart;
 @synthesize isRetainByRequestPool = _isRetainByRequestPool;
 
@@ -162,7 +154,6 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
 
 - (BOOL)forceStart:(NSError **)error
 {
-    self.isForceStart = YES;
     return [self start:error];
 }
 
@@ -198,16 +189,6 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
 
 #pragma mark - Cache
 
-- (BOOL)isCacheValid
-{
-    return self.cacheState == kTCHTTPCachedResponseStateValid;
-}
-
-- (TCHTTPCachedResponseState)cacheState
-{
-    return kTCHTTPCachedResponseStateNone;
-}
-
 - (BOOL)shouldIgnoreCache
 {
     return YES;
@@ -216,21 +197,6 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
 - (void)setShouldIgnoreCache:(BOOL)shouldIgnoreCache
 {
     
-}
-
-- (BOOL)shouldCacheResponse
-{
-    return NO;
-}
-
-- (NSTimeInterval)cacheTimeoutInterval
-{
-    return 0.0f;
-}
-
-- (BOOL)isDataFromCache
-{
-    return NO;
 }
 
 - (void)cachedResponseByForce:(BOOL)force result:(void(^)(id response, TCHTTPCachedResponseState state))result
@@ -272,23 +238,13 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
     }
 }
 
-- (void)requestResponseReset
-{
-    
-}
-
-- (void)setCachePathFilterWithRequestParameters:(NSDictionary *)parameters
-                                  sensitiveData:(NSObject<NSCopying> *)sensitiveData;
-{
-    @throw [NSException exceptionWithName:NSStringFromClass(self.class) reason:@"for subclass to impl" userInfo:nil];
-}
 
 #pragma mark - Helper
 
 - (NSString *)description
 {
     NSURLRequest *request = self.requestTask.originalRequest;
-    return [NSString stringWithFormat:@"🌍🌍🌍 %@: %@\n param: %@\n response: %@", NSStringFromClass(self.class), request.URL, [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], self.responseObject];
+    return [NSString stringWithFormat:@"🌍🌍🌍 %@: %@\n param: %@\n from cache: %@\n response: %@", NSStringFromClass(self.class), request.URL, [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding], self.cachePolicy.isDataFromCache ? @"YES" : @"NO", self.responseObject];
 }
 
 

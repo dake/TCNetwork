@@ -30,14 +30,17 @@ static NSString *const kHost = @"https://api.douban.com/v2/";
         return nil;
     }
     
+    TCHTTPCachePolicy *policy = [[TCHTTPCachePolicy alloc] init];
+    policy.cacheTimeoutInterval = 10 * 60;
+    policy.shouldExpiredCacheValid = NO;
+    
     NSString *apiUrl = [@"book/" stringByAppendingString:bookID];
-    TCHTTPRequest *request = [self cacheRequestWithMethod:kTCHTTPRequestMethodGet apiUrl:apiUrl host:nil];
+    TCHTTPRequest *request = [self requestWithMethod:kTCHTTPRequestMethodGet cachePolicy:policy apiUrl:apiUrl host:nil];
     if (nil != beforeRun) {
         beforeRun(request);
     }
     request.parameters = @{@"fields": @"id,title,url"};
-    request.cacheTimeoutInterval = 10 * 60;
-    request.shouldExpiredCacheValid = NO;
+ 
     return [request start:NULL] ? request : nil;
 }
 
