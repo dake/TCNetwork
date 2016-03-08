@@ -18,10 +18,11 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequestCenter : NSObject <TCHTTPReq
 @property (nonatomic, strong) NSURL *baseURL;
 
 @property (nonatomic, assign, readonly) BOOL networkReachable;
-// default: 0, use Max(-[TCHTTPRequestCenter timeoutInterval], -[TCHTTPRequest timeoutInterval])
+// default: 0, use Max(TCHTTPRequestCenter.timeoutInterval, TCHTTPRequest.timeoutInterval)
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
-@property (nonatomic, assign) NSInteger maxConcurrentCount;
 @property (nonatomic, strong) NSSet *acceptableContentTypes;
+
+@property (nonatomic, strong, readonly) NSURLSessionConfiguration *sessionConfiguration;
 @property (nonatomic, weak) id<TCHTTPRequestUrlFilter> urlFilter;
 
 + (instancetype)defaultCenter;
@@ -43,7 +44,7 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequestCenter : NSObject <TCHTTPReq
 
 #pragma mark - Custom value in HTTP Head
 
-@property (nonatomic, strong) NSDictionary<__kindof NSString *, __kindof NSString *> *customHeaderValue;
+@property (nonatomic, strong) NSDictionary<NSString *, NSString *> *customHeaderValue;
 
 /**
  Sets the "Authorization" HTTP header set in request objects made by the HTTP client to a basic authentication value with Base64-encoded username and password. 
