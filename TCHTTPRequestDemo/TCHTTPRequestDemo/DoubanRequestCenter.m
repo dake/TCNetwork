@@ -24,7 +24,7 @@ static NSString *const kHost = @"https://api.douban.com/v2/";
     return self;
 }
 
-- (TCHTTPRequest *)fetchBookInfoForID:(NSString *)bookID beforeRun:(void(^)(TCHTTPRequest *request))beforeRun
+- (id<TCHTTPRequest>)fetchBookInfoForID:(NSString *)bookID beforeRun:(void(^)(id<TCHTTPRequest> request))beforeRun
 {
     if (nil == bookID || bookID.length < 1) {
         return nil;
@@ -35,7 +35,7 @@ static NSString *const kHost = @"https://api.douban.com/v2/";
     policy.shouldExpiredCacheValid = NO;
     
     NSString *apiUrl = [@"book/" stringByAppendingString:bookID];
-    TCHTTPRequest *request = [self requestWithMethod:kTCHTTPRequestMethodGet cachePolicy:policy apiUrl:apiUrl host:nil];
+    id<TCHTTPRequest> request = [self requestWithMethod:kTCHTTPMethodGet cachePolicy:policy apiUrl:apiUrl host:nil];
     if (nil != beforeRun) {
         beforeRun(request);
     }
@@ -44,13 +44,13 @@ static NSString *const kHost = @"https://api.douban.com/v2/";
     return [request start:NULL] ? request : nil;
 }
 
-- (TCHTTPRequest *)searchBookListForKeyword:(NSString *)keyword beforeRun:(void(^)(TCHTTPRequest *request))beforeRun
+- (id<TCHTTPRequest>)searchBookListForKeyword:(NSString *)keyword beforeRun:(void(^)(id<TCHTTPRequest> request))beforeRun
 {
     if (nil == keyword || keyword.length < 1) {
         return nil;
     }
     
-    TCHTTPRequest *request = [self requestWithMethod:kTCHTTPRequestMethodGet apiUrl:@"book/search" host:nil];
+    id<TCHTTPRequest> request = [self requestWithMethod:kTCHTTPMethodGet apiUrl:@"book/search" host:nil];
     if (nil != beforeRun) {
         beforeRun(request);
     }

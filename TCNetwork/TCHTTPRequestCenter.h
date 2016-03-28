@@ -7,13 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TCHTTPRequestCenterProtocol.h"
+#import "TCHTTPRequestAgent.h"
 #import "TCHTTPRequestUrlFilter.h"
-#import "TCHTTPRequest.h"
+#import "TCHTTPCachePolicy.h"
+#import "TCHTTPStreamPolicy.h"
 
 
 @class AFSecurityPolicy;
-NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequestCenter : NSObject <TCHTTPRequestCenterProtocol>
+NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequestCenter : NSObject <TCHTTPRequestAgent>
 
 @property (nonatomic, strong) NSURL *baseURL;
 
@@ -25,21 +26,27 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequestCenter : NSObject <TCHTTPReq
 @property (nonatomic, strong, readonly) NSURLSessionConfiguration *sessionConfiguration;
 @property (nonatomic, weak) id<TCHTTPRequestUrlFilter> urlFilter;
 
+
 + (instancetype)defaultCenter;
 - (instancetype)initWithBaseURL:(NSURL *)url sessionConfiguration:(NSURLSessionConfiguration *)configuration;
 - (AFSecurityPolicy *)securityPolicy;
 
-- (BOOL)addRequest:(__kindof TCHTTPRequest *)request error:(NSError **)error;
+- (BOOL)addRequest:(id<TCHTTPRequest>)request error:(NSError **)error;
 
-- (void)addObserver:(__unsafe_unretained id)observer forRequest:(id<TCHTTPRequestProtocol>)request;
 - (void)removeRequestObserver:(__unsafe_unretained id)observer forIdentifier:(id<NSCopying>)identifier;
 - (void)removeRequestObserver:(__unsafe_unretained id)observer;
 
 - (NSString *)cachePathForResponse;
 - (NSString *)cacheDomainForResponse;
-- (void)removeAllCachedResponse;
+- (void)removeAllCachedResponses;
 
 - (void)registerResponseValidatorClass:(Class)validatorClass;
+
+
+#pragma mark - Cache 
+
+- (void)storeCachedResponse:(id)response forCachePolicy:(TCHTTPCachePolicy *)cachePolicy finish:(dispatch_block_t)block;
+- (void)cachedResponseForRequest:(id<TCHTTPRequest>)request result:(void(^)(id response))result;
 
 
 #pragma mark - Custom value in HTTP Head
@@ -53,15 +60,18 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequestCenter : NSObject <TCHTTPReq
 @property (nonatomic, copy) NSString *authorizationUsername;
 @property (nonatomic, copy) NSString *authorizationPassword;
 
+@end
 
-#pragma mark - Making HTTP Requests
+
+@interface TCHTTPRequestCenter (TCHTTPRequest)
 
 //
 // request method below, will not auto start
 //
-- (TCHTTPRequest *)requestWithMethod:(TCHTTPRequestMethod)method apiUrl:(NSString *)apiUrl host:(NSString *)host;
-- (TCHTTPRequest *)requestWithMethod:(TCHTTPRequestMethod)method cachePolicy:(TCHTTPCachePolicy *)policy apiUrl:(NSString *)apiUrl host:(NSString *)host;
-- (TCHTTPRequest *)requestForDownload:(NSString *)url to:(NSString *)dstPath cachePolicy:(TCHTTPCachePolicy *)policy;
-- (TCHTTPRequest *)batchRequestWithRequests:(NSArray<__kindof TCHTTPRequest *> *)requests;
+- (id<TCHTTPRequest>)requestWithMethod:(TCHTTPMethod)method apiUrl:(NSString *)apiUrl host:(NSString *)host;
+- (id<TCHTTPRequest>)requestWithMethod:(TCHTTPMethod)method cachePolicy:(TCHTTPCachePolicy *)policy apiUrl:(NSString *)apiUrl host:(NSString *)host;
+- (id<TCHTTPRequest>)requestForDownload:(NSString *)url streamPolicy:(TCHTTPStreamPolicy *)streamPolicy cachePolicy:(TCHTTPCachePolicy *)cachePolicy;
+- (id<TCHTTPRequest>)requestForUploadTo:(NSString *)url streamPolicy:(TCHTTPStreamPolicy *)streamPolicy;
+- (id<TCHTTPRequest>)batchRequestWithRequests:(NSArray<id<TCHTTPRequest>> *)requests;
 
 @end

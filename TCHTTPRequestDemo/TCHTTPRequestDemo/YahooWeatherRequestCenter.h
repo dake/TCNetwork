@@ -10,6 +10,6 @@
 
 @interface YahooWeatherRequestCenter : TCHTTPRequestCenter
 
-- (TCHTTPRequest *)fetchWeatherForWOEID:(NSString *)woeiID beforeRun:(void(^)(TCHTTPRequest *request))beforeRun;
+- (id<TCHTTPRequest>)fetchWeatherForWOEID:(NSString *)woeiID beforeRun:(void(^)(id<TCHTTPRequest> request))beforeRun;
 
 @end

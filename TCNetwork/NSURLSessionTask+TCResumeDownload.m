@@ -199,19 +199,26 @@ static NSString *tc_md5_32(NSString *str)
     if (class_addMethod(self, aSelector, method_getImplementation(m2), method_getTypeEncoding(m2))) {
         if (NULL != m1) {
             class_replaceMethod(self, bSelector, method_getImplementation(m1), method_getTypeEncoding(m1));
-        } else {
+        } else { // original method not exist, then add one
             char *rtType = method_copyReturnType(m2);
             NSString *returnType = nil;
+            char value = @encode(void)[0];
             if (NULL != rtType) {
+                value = rtType[0];
                 returnType = @(rtType);
-                free(rtType);
+                free(rtType), rtType = NULL;
             }
             
             IMP imp = NULL;
-            if ([returnType isEqualToString:@"v"]) {
+            
+            if (value == @encode(void)[0]) {
                 imp = imp_implementationWithBlock(^{});
-            } else if ([returnType hasPrefix:@"@"]) {
+            } else if (value == @encode(id)[0]) {
                 imp = imp_implementationWithBlock(^{return nil;});
+            } else if (value == @encode(Class)[0]) {
+                imp = imp_implementationWithBlock(^{return Nil;});
+            } else if (value == @encode(SEL)[0] || value == @encode(void *)[0] || value == @encode(int[1])[0]) {
+                imp = imp_implementationWithBlock(^{return NULL;});
             } else if ([returnType isEqualToString:@(@encode(CGPoint))]) {
                 imp = imp_implementationWithBlock(^{return CGPointZero;});
             } else if ([returnType isEqualToString:@(@encode(CGSize))]) {
@@ -224,6 +231,8 @@ static NSString *tc_md5_32(NSString *str)
                 imp = imp_implementationWithBlock(^{return UIEdgeInsetsZero;});
             } else if ([returnType isEqualToString:@(@encode(NSRange))]) {
                 imp = imp_implementationWithBlock(^{return NSMakeRange(NSNotFound, 0);});
+            } else if (value == @encode(CGPoint)[0] || value == '(') { // FIXME: 0
+                imp = imp_implementationWithBlock(^{return 0;});
             } else {
                 imp = imp_implementationWithBlock(^{return 0;});
             }
@@ -235,11 +244,12 @@ static NSString *tc_md5_32(NSString *str)
         method_exchangeImplementations(m1, m2);
     }
 }
-
 #endif
 
 @end
 
+
+#pragma mark - NSURLSessionTask
 
 @implementation NSURLSessionTask (TCResumeDownload)
 

@@ -11,9 +11,9 @@
 @interface DoubanRequestCenter : TCHTTPRequestCenter
 
 // fetch book info for id with caching response
-- (TCHTTPRequest *)fetchBookInfoForID:(NSString *)bookID beforeRun:(void(^)(TCHTTPRequest *request))beforeRun;
+- (id<TCHTTPRequest>)fetchBookInfoForID:(NSString *)bookID beforeRun:(void(^)(id<TCHTTPRequest> request))beforeRun;
 
 // search books for keyword without caching response
-- (TCHTTPRequest *)searchBookListForKeyword:(NSString *)keyword beforeRun:(void(^)(TCHTTPRequest *request))beforeRun;
+- (id<TCHTTPRequest>)searchBookListForKeyword:(NSString *)keyword beforeRun:(void(^)(id<TCHTTPRequest> request))beforeRun;
 
 @end

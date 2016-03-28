@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TCHTTPResponseValidator.h"
+#import "TCHTTPRespValidator.h"
 
-@interface TCBaseResponseValidator : NSObject <TCHTTPResponseValidator>
+@interface TCBaseResponseValidator : NSObject <TCHTTPRespValidator>
 
 @property (nonatomic, strong) id data;
 @property (nonatomic, assign) BOOL success;

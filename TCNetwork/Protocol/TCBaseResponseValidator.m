@@ -26,4 +26,11 @@
     return self.success;
 }
 
+- (void)reset
+{
+    self.data = nil;
+    self.success = NO;
+    self.error = nil;
+}
+
 @end

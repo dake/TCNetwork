@@ -8,6 +8,7 @@
 
 #import "TCHTTPCachePolicy.h"
 #import "TCHTTPRequestHelper.h"
+#import "TCHTTPStreamPolicy.h"
 
 
 NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
@@ -54,7 +55,7 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
     NSParameterAssert(requestUrl);
     
     static NSString *const s_fmt = @"Method:%zd RequestUrl:%@ Parames:%@ Sensitive:%@";
-    NSString *cacheKey = [NSString stringWithFormat:s_fmt, _request.requestMethod, requestUrl, _parametersForCachePathFilter, _sensitiveDataForCachePathFilter];
+    NSString *cacheKey = [NSString stringWithFormat:s_fmt, _request.method, requestUrl, _parametersForCachePathFilter, _sensitiveDataForCachePathFilter];
     _parametersForCachePathFilter = nil;
     _sensitiveDataForCachePathFilter = nil;
     _cacheFileName = [TCHTTPRequestHelper MD5_32:cacheKey];
@@ -64,8 +65,8 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
 
 - (NSString *)cacheFilePath
 {
-    if (_request.requestMethod == kTCHTTPRequestMethodDownload) {
-        return _request.downloadDestinationPath;
+    if (_request.method == kTCHTTPMethodDownload) {
+        return _request.streamPolicy.downloadDestinationPath;
     }
     
     NSString *path = nil;
@@ -74,6 +75,10 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
     }
     
     NSParameterAssert(path);
+    
+    if (nil == path) {
+        path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"TCHTTPCache.TCNetwork.TCKit"];
+    }
     if ([self createDiretoryForCachePath:path]) {
         return [path stringByAppendingPathComponent:self.cacheFileName];
     }
@@ -104,53 +109,53 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
 
 - (BOOL)shouldWriteToCache
 {
-    return _request.requestMethod != kTCHTTPRequestMethodDownload &&
+    return _request.method != kTCHTTPMethodDownload &&
     self.shouldCacheResponse &&
     self.cacheTimeoutInterval != 0 &&
     self.validateResponseObjectForCache;
 }
 
-- (TCHTTPCachedResponseState)cacheState
+- (TCCachedRespState)cacheState
 {
     NSString *path = self.cacheFilePath;
     if (nil == path) {
-        return kTCHTTPCachedResponseStateNone;
+        return kTCCachedRespNone;
     }
     
     BOOL isDir = NO;
     NSFileManager *fileMngr = NSFileManager.defaultManager;
     if (![fileMngr fileExistsAtPath:path isDirectory:&isDir] || isDir) {
-        return kTCHTTPCachedResponseStateNone;
+        return kTCCachedRespNone;
     }
     
     NSDictionary *attributes = [fileMngr attributesOfItemAtPath:path error:NULL];
     if (nil == attributes || attributes.count < 1) {
-        return kTCHTTPCachedResponseStateExpired;
+        return kTCCachedRespExpired;
     }
     
     NSTimeInterval timeIntervalSinceNow = attributes.fileModificationDate.timeIntervalSinceNow;
     if (timeIntervalSinceNow >= 0) { // deal with wrong system time
-        return kTCHTTPCachedResponseStateExpired;
+        return kTCCachedRespExpired;
     }
     
     NSTimeInterval cacheTimeoutInterval = self.cacheTimeoutInterval;
     
     if (cacheTimeoutInterval < 0 || -timeIntervalSinceNow < cacheTimeoutInterval) {
-        if (_request.requestMethod == kTCHTTPRequestMethodDownload) {
+        if (_request.method == kTCHTTPMethodDownload) {
             if (![fileMngr fileExistsAtPath:path]) {
-                return kTCHTTPCachedResponseStateNone;
+                return kTCCachedRespNone;
             }
         }
         
-        return kTCHTTPCachedResponseStateValid;
+        return kTCCachedRespValid;
     }
     
-    return kTCHTTPCachedResponseStateExpired;
+    return kTCCachedRespExpired;
 }
 
 - (BOOL)isCacheValid
 {
-    return self.cacheState == kTCHTTPCachedResponseStateValid;
+    return self.cacheState == kTCCachedRespValid;
 }
 
 - (BOOL)isDataFromCache
@@ -159,88 +164,7 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
 }
 
 
-#pragma mark - cached response access
-
-- (void)writeToCache:(id)response finish:(dispatch_block_t)block
-{
-    __weak typeof(self) wSelf = self;
-    dispatch_async(self.responseQueue, ^{
-        @autoreleasepool {
-            if (wSelf.shouldWriteToCache) {
-                NSString *path = wSelf.cacheFilePath;
-                if (nil != path && ![NSKeyedArchiver archiveRootObject:response toFile:path]) {
-                    NSAssert(false, @"write response failed.");
-                }
-            }
-            
-            if (nil != block) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    block();
-                });
-            }
-        }
-    });
-}
-
-- (void)cachedResponseWithoutValidate:(void(^)(id response))result
-{
-    NSParameterAssert(result);
-    
-    if (nil == result) {
-        return;
-    }
-    
-    if (nil == _cachedResponse) {
-        NSString *path = self.cacheFilePath;
-        if (nil == path) {
-            result(nil);
-            return;
-        }
-        
-        NSFileManager *fileMngr = NSFileManager.defaultManager;
-        BOOL isDir = NO;
-        if (![fileMngr fileExistsAtPath:path isDirectory:&isDir] || isDir) {
-            result(nil);
-            return;
-        }
-        
-        if (_request.requestMethod == kTCHTTPRequestMethodDownload) {
-            _cachedResponse = path;
-            result(_cachedResponse);
-        } else {
-            __weak typeof(self) wSelf = self;
-            dispatch_async(self.responseQueue, ^{
-                @autoreleasepool {
-                    id cachedResponse = nil;
-                    @try {
-                        cachedResponse = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
-                    }
-                    @catch (NSException *exception) {
-                        cachedResponse = nil;
-                        NSLog(@"%@", exception);
-                    }
-                    @finally {
-                        __strong typeof(wSelf) sSelf = wSelf;
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            sSelf.cachedResponse = cachedResponse;
-                            result(cachedResponse);
-                        });
-                    }
-                }
-            });
-        }
-    } else {
-        result(_cachedResponse);
-    }
-}
-
-
 #pragma mark -
-
-- (dispatch_queue_t)responseQueue
-{
-    return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
-}
 
 - (BOOL)createDiretoryForCachePath:(NSString *)path
 {

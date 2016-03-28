@@ -12,17 +12,17 @@
 
 @implementation TCHTTPRequest (Public)
 
-+ (instancetype)requestWithMethod:(TCHTTPRequestMethod)method
++ (instancetype)requestWithMethod:(TCHTTPMethod)method
 {
     return [[self alloc] initWithMethod:method];
 }
 
-+ (instancetype)cacheRequestWithMethod:(TCHTTPRequestMethod)method cachePolicy:(TCHTTPCachePolicy *)policy
++ (instancetype)cacheRequestWithMethod:(TCHTTPMethod)method cachePolicy:(TCHTTPCachePolicy *)policy
 {
     return [TCHTTPCacheRequest requestWithMethod:method cachePolicy:policy];
 }
 
-+ (instancetype)batchRequestWithRequests:(NSArray<__kindof TCHTTPRequest *> *)requests
++ (instancetype)batchRequestWithRequests:(NSArray<id<TCHTTPRequest>> *)requests
 {
     return [TCHTTPBatchRequest requestWithRequests:requests];
 }

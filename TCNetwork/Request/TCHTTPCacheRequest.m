@@ -15,18 +15,16 @@
 
 @implementation TCHTTPCacheRequest
 
-@dynamic isForceStart;
-
+@synthesize isForceStart = _isForceStart;
 @synthesize cachePolicy = _cachePolicy;
-@synthesize shouldIgnoreCache = _shouldIgnoreCache;
 
 
-+ (instancetype)requestWithMethod:(TCHTTPRequestMethod)method cachePolicy:(TCHTTPCachePolicy *)policy
++ (instancetype)requestWithMethod:(TCHTTPMethod)method cachePolicy:(TCHTTPCachePolicy *)policy
 {
     return [[self alloc] initWithMethod:method cachePolicy:policy];
 }
 
-- (instancetype)initWithMethod:(TCHTTPRequestMethod)method cachePolicy:(TCHTTPCachePolicy *)policy
+- (instancetype)initWithMethod:(TCHTTPMethod)method cachePolicy:(TCHTTPCachePolicy *)policy
 {
     self = [super initWithMethod:method];
     if (self) {
@@ -37,15 +35,15 @@
 }
 
 
-- (void)setState:(TCHTTPRequestState)state
+- (void)setState:(TCRequestState)state
 {
     [super setState:state];
-    if (kTCHTTPRequestStateFinished == state) {
+    if (kTCRequestFinished == state) {
         [self requestResponseReset];
     }
 }
 
-- (id<NSCoding>)responseObject
+- (id)responseObject
 {
     if (nil != self.cachePolicy.cachedResponse) {
         return self.cachePolicy.cachedResponse;
@@ -58,30 +56,25 @@
     self.cachePolicy.cachedResponse = nil;
 }
 
-- (void)requestResponded:(BOOL)isValid finish:(dispatch_block_t)finish clean:(BOOL)clean
+- (void)requestResponded:(BOOL)isValid clean:(BOOL)clean
 {
     // !!!: must be called before self.validateResponseObject called, below
     [self requestResponseReset];
     
-    if (isValid) {
-        __weak typeof(self) wSelf = self;
-        [self.cachePolicy writeToCache:self.responseObject finish:^{
-            [wSelf callSuperRequestResponded:isValid finish:finish clean:clean];
+    if (isValid && self.cachePolicy.shouldWriteToCache && nil != self.requestAgent) {
+        [self.requestAgent storeCachedResponse:self.responseObject forCachePolicy:self.cachePolicy finish:^{
+            // no weak self here, in case of request dealloc before write cache callback
+            [super requestResponded:isValid clean:clean];
         }];
     } else {
-        [super requestResponded:isValid finish:finish clean:clean];
+        [super requestResponded:isValid clean:clean];
     }
-}
-
-- (void)callSuperRequestResponded:(BOOL)isValid finish:(dispatch_block_t)finish clean:(BOOL)clean
-{
-    [super requestResponded:isValid finish:finish clean:clean];
 }
 
 
 #pragma mark -
 
-- (void)cachedResponseByForce:(BOOL)force result:(void(^)(id response, TCHTTPCachedResponseState state))result
+- (void)cachedResponseByForce:(BOOL)force result:(void(^)(id response, TCCachedRespState state))result
 {
     NSParameterAssert(result);
     
@@ -89,11 +82,11 @@
         return;
     }
     
-    TCHTTPCachedResponseState cacheState = self.cachePolicy.cacheState;
+    TCCachedRespState cacheState = self.cachePolicy.cacheState;
     
-    if (cacheState == kTCHTTPCachedResponseStateValid || (force && cacheState != kTCHTTPCachedResponseStateNone)) {
+    if (cacheState == kTCCachedRespValid || (force && cacheState != kTCCachedRespNone)) {
         __weak typeof(self) wSelf = self;
-        [self.cachePolicy cachedResponseWithoutValidate:^(id response) {
+        [self.requestAgent cachedResponseForRequest:self result:^(id response) {
             if (nil != response && nil != wSelf.responseValidator &&
                 [wSelf.responseValidator respondsToSelector:@selector(validateHTTPResponse:fromCache:)]) {
                 [wSelf.responseValidator validateHTTPResponse:response fromCache:YES];
@@ -104,7 +97,7 @@
         
         return;
     }
-
+    
     result(nil, cacheState);
 }
 
@@ -115,16 +108,8 @@
         isValid = [self.responseValidator validateHTTPResponse:self.responseObject fromCache:YES];
     }
     
-    if (notFire) {
-        __weak typeof(self) wSelf = self;
-        [super requestResponded:isValid finish:^{
-            // remove from pool
-            if (wSelf.isRetainByRequestPool) {
-                [wSelf.requestAgent removeRequestObserver:wSelf.observer forIdentifier:wSelf.requestIdentifier];
-            }
-        } clean:notFire];
-    } else if (isValid) {
-        [super requestResponded:isValid finish:nil clean:notFire];
+    if (notFire || isValid) {
+        [super requestResponded:isValid clean:notFire];
     }
 }
 
@@ -140,16 +125,16 @@
         return [self forceStart:error];
     }
     
-    if (self.shouldIgnoreCache) {
+    if (self.cachePolicy.shouldIgnoreCache || nil != self.timerPolicy) {
         return [super start:error];
     }
     
-    TCHTTPCachedResponseState state = self.cachePolicy.cacheState;
-    if (state == kTCHTTPCachedResponseStateValid || (self.cachePolicy.shouldExpiredCacheValid && state != kTCHTTPCachedResponseStateNone)) {
+    TCCachedRespState state = self.cachePolicy.cacheState;
+    if (kTCCachedRespValid == state || (self.cachePolicy.shouldExpiredCacheValid && kTCCachedRespNone != state)) {
         // !!!: add to pool to prevent self dealloc before cache respond
-        [self.requestAgent addObserver:self.observer forRequest:self];
+        [self.requestAgent addRequestToPool:self];
         __weak typeof(self) wSelf = self;
-        [self.cachePolicy cachedResponseWithoutValidate:^(id response) {
+        [self.requestAgent cachedResponseForRequest:self result:^(id response) {
             
             if (nil == response) {
                 [wSelf callSuperStart];
@@ -157,7 +142,7 @@
             }
             
             __strong typeof(wSelf) sSelf = wSelf;
-            if (kTCHTTPCachedResponseStateValid == state) {
+            if (kTCCachedRespValid == state) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [sSelf cacheRequestCallbackWithoutFiring:YES];
                 });
@@ -168,7 +153,7 @@
             }
         }];
         
-        return kTCHTTPCachedResponseStateValid == state ? YES : [super canStart:error];
+        return kTCCachedRespValid == state ? YES : [super canStart:error];
     }
     
     return [super start:error];
@@ -178,24 +163,24 @@
 {
     self.isForceStart = YES;
     
-    if (!self.shouldIgnoreCache) {
-        TCHTTPCachedResponseState state = self.cachePolicy.cacheState;
-        if (kTCHTTPCachedResponseStateExpired == state || kTCHTTPCachedResponseStateValid == state) {
+    if (!self.cachePolicy.shouldIgnoreCache && nil == self.timerPolicy) {
+        TCCachedRespState state = self.cachePolicy.cacheState;
+        if (kTCCachedRespValid == state || (kTCCachedRespExpired == state && self.cachePolicy.shouldExpiredCacheValid)) {
             // !!!: add to pool to prevent self dealloc before cache respond
-            [self.requestAgent addObserver:self.observer forRequest:self];
+            [self.requestAgent addRequestToPool:self];
             
             __weak typeof(self) wSelf = self;
-            [self.cachePolicy cachedResponseWithoutValidate:^(id response) {
+            [self.requestAgent cachedResponseForRequest:self result:^(id response) {
                 __strong typeof(wSelf) sSelf = wSelf;
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    BOOL ret = [sSelf callSuperStart];
                     if (nil != response) {
-                        [sSelf cacheRequestCallbackWithoutFiring:!ret];
+                        [sSelf cacheRequestCallbackWithoutFiring:![sSelf canStart:NULL]];
                     }
+                    [sSelf callSuperStart];
                 });
             }];
             
-            return [super canStart:error];
+            return [self canStart:error];
         }
     }
     

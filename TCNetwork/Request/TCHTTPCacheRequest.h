@@ -13,16 +13,17 @@ NS_ASSUME_NONNULL_BEGIN
 NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPCacheRequest : TCHTTPRequest
 
 @property (nonatomic, assign) BOOL isForceStart;
+@property (nonatomic, strong, readonly) TCHTTPCachePolicy *cachePolicy;
 
-+ (instancetype)requestWithMethod:(TCHTTPRequestMethod)method cachePolicy:(TCHTTPCachePolicy *)policy;
-- (instancetype)initWithMethod:(TCHTTPRequestMethod)method cachePolicy:(TCHTTPCachePolicy *)policy;
++ (instancetype)requestWithMethod:(TCHTTPMethod)method cachePolicy:(TCHTTPCachePolicy *)policy;
+- (instancetype)initWithMethod:(TCHTTPMethod)method cachePolicy:(TCHTTPCachePolicy *)policy;
 
 /**
  @brief	fire a request regardless of cache available
  if cache is available, callback then fire a request.
  */
 - (BOOL)forceStart:(NSError **)error;
-- (void)cachedResponseByForce:(BOOL)force result:(void(^)(id response, TCHTTPCachedResponseState state))result;
+- (void)cachedResponseByForce:(BOOL)force result:(void(^)(id response, TCCachedRespState state))result;
 
 @end
 

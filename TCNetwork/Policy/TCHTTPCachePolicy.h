@@ -7,14 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TCHTTPRequestCenterProtocol.h"
+#import "TCHTTPRequestProtocol.h"
+#import "TCHTTPReqAgentDelegate.h"
 
 
 extern NSInteger const kTCHTTPRequestCacheNeverExpired;
 
 @interface TCHTTPCachePolicy : NSObject
 
-@property (nonatomic, weak) id<TCHTTPRequestProtocol> request;
+@property (nonatomic, weak) id<TCHTTPRequest, TCHTTPReqAgentDelegate> request;
 @property (nonatomic, strong) id cachedResponse;
 
 
@@ -28,7 +29,7 @@ extern NSInteger const kTCHTTPRequestCacheNeverExpired;
 
 - (BOOL)isCacheValid;
 - (BOOL)isDataFromCache;
-- (TCHTTPCachedResponseState)cacheState;
+- (TCCachedRespState)cacheState;
 
 
 // default: parameters = nil, sensitiveData = nil
@@ -36,8 +37,8 @@ extern NSInteger const kTCHTTPRequestCacheNeverExpired;
                                   sensitiveData:(id)sensitiveData;
 
 
+- (NSString *)cacheFileName;
 - (NSString *)cacheFilePath;
-- (void)writeToCache:(id)response finish:(dispatch_block_t)block;
-- (void)cachedResponseWithoutValidate:(void(^)(id response))result;
+- (BOOL)shouldWriteToCache;
 
 @end

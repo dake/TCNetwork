@@ -10,11 +10,19 @@ Still using AFNetworking 2.x ? see [TCNetwork 1.0](https://github.com/dake/TCNet
 ## Features
 
 - All requests are NSURLSession based
+
 - TCP multiplexing for HTTP2.0 by auto-reused NSURLSession
-- Response can be cached offline by expiration time
+
+- Response can be cached offline by expiration time for both memory cache and persistent cache, see `TCHTTPCachePolicy`
+
 - Persistent (optional) resuming download with [NSURLSession+TCResumeDownload](https://github.com/dake/NSURLSessionTask-TCResumeDownload)
+
 - `block` and `delegate` callback
+
 - Batch requests (see `TCHTTPBatchRequest`)
+
+- Polling request, delay request, auto retry request, see `TCHTTPTimerPolicy`
+
 - URL filter, replace part of URL, or append common parameter 
 
 ## TODO

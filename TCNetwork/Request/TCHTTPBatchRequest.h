@@ -10,10 +10,10 @@
 
 NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPBatchRequest : TCHTTPRequest
 
-@property (nonatomic, copy, readwrite) NSArray<__kindof TCHTTPRequest *> *requestArray;
+@property (nonatomic, copy) NSArray<id<TCHTTPRequest>> *batchRequests;
 
-+ (instancetype)requestWithRequests:(NSArray<__kindof TCHTTPRequest *> *)requests;
-- (instancetype)initWithRequests:(NSArray<__kindof TCHTTPRequest *> *)requests;
++ (instancetype)requestWithRequests:(NSArray<id<TCHTTPRequest>> *)requests;
+- (instancetype)initWithRequests:(NSArray<id<TCHTTPRequest>> *)requests;
 
 - (BOOL)start:(NSError **)error;
 

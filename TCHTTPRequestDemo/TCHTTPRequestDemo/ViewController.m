@@ -41,8 +41,8 @@
 
 - (IBAction)clearRequestCacheTapped:(UIButton *)sender
 {
-    [[DoubanRequestCenter defaultCenter] removeAllCachedResponse];
-    [[YahooWeatherRequestCenter defaultCenter] removeAllCachedResponse];
+    [[DoubanRequestCenter defaultCenter] removeAllCachedResponses];
+    [[YahooWeatherRequestCenter defaultCenter] removeAllCachedResponses];
 }
 
 - (void)viewDidLoad {
@@ -56,27 +56,27 @@
     //
     
     // fetch book info with caching response
-    [[DoubanRequestCenter defaultCenter] fetchBookInfoForID:@"17604305" beforeRun:^(TCHTTPRequest *request) {
+    [[DoubanRequestCenter defaultCenter] fetchBookInfoForID:@"17604305" beforeRun:^(id<TCHTTPRequest> request) {
         request.observer = self;
-        request.requestIdentifier = NSStringFromSelector(@selector(fetchBookInfoForID:beforeRun:));
+        request.identifier = NSStringFromSelector(@selector(fetchBookInfoForID:beforeRun:));
         
         // You can set delegate here
         //request.delegate = self;
         // or use resultBlock
-        request.resultBlock = ^(TCHTTPRequest *request, BOOL successe) {
+        request.resultBlock = ^(id<TCHTTPRequest> request, BOOL successe) {
             NSLog(@"%@", request.responseObject);
         };
     }];
     
     // search book list without caching response
-    [[DoubanRequestCenter defaultCenter] searchBookListForKeyword:@"python" beforeRun:^(TCHTTPRequest *request) {
+    [[DoubanRequestCenter defaultCenter] searchBookListForKeyword:@"python" beforeRun:^(id<TCHTTPRequest> request) {
         request.observer = self;
-        request.requestIdentifier = NSStringFromSelector(@selector(searchBookListForKeyword:beforeRun:));
+        request.identifier = NSStringFromSelector(@selector(searchBookListForKeyword:beforeRun:));
         
         // You can set delegate here
         //request.delegate = self;
         // or use resultBlock
-        request.resultBlock = ^(TCHTTPRequest *request, BOOL successe) {
+        request.resultBlock = ^(id<TCHTTPRequest> request, BOOL successe) {
             NSLog(@"%@", request.responseObject);
         };
     }];
@@ -89,14 +89,14 @@
     //
     
     static NSString *const kBeijingW = @"2151330";
-    [[YahooWeatherRequestCenter defaultCenter] fetchWeatherForWOEID:kBeijingW beforeRun:^(TCHTTPRequest *request) {
+    [[YahooWeatherRequestCenter defaultCenter] fetchWeatherForWOEID:kBeijingW beforeRun:^(id<TCHTTPRequest> request) {
         request.observer = self;
-        request.requestIdentifier = NSStringFromSelector(@selector(fetchWeatherForWOEID:beforeRun:));
+        request.identifier = NSStringFromSelector(@selector(fetchWeatherForWOEID:beforeRun:));
         
         // You can set delegate here
         //request.delegate = self;
         // or use resultBlock
-        request.resultBlock = ^(TCHTTPRequest *request, BOOL successe) {
+        request.resultBlock = ^(id<TCHTTPRequest> request, BOOL successe) {
             NSLog(@"%@", request.responseObject);
         };
     }];
@@ -107,22 +107,22 @@
     YahooWeatherRequestCenter *center = [YahooWeatherRequestCenter defaultCenter];
     TCHTTPCachePolicy *policy = [[TCHTTPCachePolicy alloc] init];
     policy.cacheTimeoutInterval = 5 * 60;
-    TCHTTPRequest *request1 = [center requestWithMethod:kTCHTTPRequestMethodGet cachePolicy:policy apiUrl:@"forecastrss" host:nil];
+    id<TCHTTPRequest> request1 = [center requestWithMethod:kTCHTTPMethodGet cachePolicy:policy apiUrl:@"forecastrss" host:nil];
     request1.parameters = @{@"w": kBeijingW, @"u": @"c"};
     
-    TCHTTPRequest *request2 = [center requestWithMethod:kTCHTTPRequestMethodGet apiUrl:@"ig/api" host:@"http://www.google.com/"];
+    id<TCHTTPRequest> request2 = [center requestWithMethod:kTCHTTPMethodGet apiUrl:@"ig/api" host:@"http://www.google.com/"];
     request2.parameters = @{@"weather": @"Beijing"};
     
 
-    TCHTTPRequest *batchRequest = [center batchRequestWithRequests:@[request1, request2]];
+    id<TCHTTPRequest> batchRequest = [center batchRequestWithRequests:@[request1, request2]];
     batchRequest.observer = self;
-    batchRequest.requestIdentifier = NSStringFromSelector(@selector(batchRequestWithRequests:));
+    batchRequest.identifier = NSStringFromSelector(@selector(batchRequestWithRequests:));
     
     // You can set delegate here
     //request.delegate = self;
     // or use resultBlock
-    [batchRequest startWithResult:^(TCHTTPRequest *request, BOOL successe) {
-        for (TCHTTPRequest *req in request.requestArray) {
+    [batchRequest startWithResult:^(id<TCHTTPRequest> request, BOOL successe) {
+        for (id<TCHTTPRequest> req in request.batchRequests) {
             NSLog(@"%@", req.responseObject);
         }
     } error:NULL];

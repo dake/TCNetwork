@@ -7,21 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B715159E1C03F9B300E15862 /* TCHTTPRequest+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = B715159D1C03F9B300E15862 /* TCHTTPRequest+Private.m */; };
 		B71515AD1C03FA3700E15862 /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B71515A11C03FA3700E15862 /* AFHTTPSessionManager.m */; };
 		B71515AE1C03FA3700E15862 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B71515A41C03FA3700E15862 /* AFNetworkReachabilityManager.m */; };
 		B71515AF1C03FA3700E15862 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = B71515A61C03FA3700E15862 /* AFSecurityPolicy.m */; };
 		B71515B01C03FA3700E15862 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = B71515A81C03FA3700E15862 /* AFURLRequestSerialization.m */; };
 		B71515B11C03FA3700E15862 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = B71515AA1C03FA3700E15862 /* AFURLResponseSerialization.m */; };
 		B71515B21C03FA3700E15862 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B71515AC1C03FA3700E15862 /* AFURLSessionManager.m */; };
-		B738BE8B1C8444C3001B1643 /* TCHTTPCachePolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = B738BE8A1C8444C3001B1643 /* TCHTTPCachePolicy.m */; };
+		B72897F61CA93BA0007DA87F /* NSURLSessionTask+TCResumeDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897D51CA93BA0007DA87F /* NSURLSessionTask+TCResumeDownload.m */; };
+		B72897F71CA93BA0007DA87F /* TCHTTPCachePolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897D81CA93BA0007DA87F /* TCHTTPCachePolicy.m */; };
+		B72897F81CA93BA0007DA87F /* TCHTTPStreamPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897DA1CA93BA0007DA87F /* TCHTTPStreamPolicy.m */; };
+		B72897F91CA93BA0007DA87F /* TCHTTPTimerPolicy+TCHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897DC1CA93BA0007DA87F /* TCHTTPTimerPolicy+TCHTTPRequest.m */; };
+		B72897FA1CA93BA0007DA87F /* TCHTTPTimerPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897DE1CA93BA0007DA87F /* TCHTTPTimerPolicy.m */; };
+		B72897FB1CA93BA0007DA87F /* TCBaseResponseValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897E11CA93BA0007DA87F /* TCBaseResponseValidator.m */; };
+		B72897FC1CA93BA0007DA87F /* TCHTTPBatchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897E91CA93BA0007DA87F /* TCHTTPBatchRequest.m */; };
+		B72897FD1CA93BA0007DA87F /* TCHTTPCacheRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897EB1CA93BA0007DA87F /* TCHTTPCacheRequest.m */; };
+		B72897FE1CA93BA0007DA87F /* TCHTTPRequest+Public.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897ED1CA93BA0007DA87F /* TCHTTPRequest+Public.m */; };
+		B72897FF1CA93BA0007DA87F /* TCHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897EF1CA93BA0007DA87F /* TCHTTPRequest.m */; };
+		B72898001CA93BA0007DA87F /* TCHTTPRequestCenter+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897F11CA93BA0007DA87F /* TCHTTPRequestCenter+Private.m */; };
+		B72898011CA93BA0007DA87F /* TCHTTPRequestCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897F31CA93BA0007DA87F /* TCHTTPRequestCenter.m */; };
+		B72898021CA93BA0007DA87F /* TCHTTPRequestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B72897F51CA93BA0007DA87F /* TCHTTPRequestHelper.m */; };
 		B75089BF1AD65A62007867BC /* YahooWeatherRequestCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B75089BE1AD65A62007867BC /* YahooWeatherRequestCenter.m */; };
-		B75089DB1AD671E6007867BC /* TCHTTPBatchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B75089CD1AD671E6007867BC /* TCHTTPBatchRequest.m */; };
-		B75089DC1AD671E6007867BC /* TCHTTPCacheRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B75089CF1AD671E6007867BC /* TCHTTPCacheRequest.m */; };
-		B75089DD1AD671E6007867BC /* TCHTTPRequest+Public.m in Sources */ = {isa = PBXBuildFile; fileRef = B75089D11AD671E6007867BC /* TCHTTPRequest+Public.m */; };
-		B75089DE1AD671E6007867BC /* TCHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B75089D31AD671E6007867BC /* TCHTTPRequest.m */; };
-		B75089DF1AD671E6007867BC /* TCHTTPRequestCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B75089D51AD671E6007867BC /* TCHTTPRequestCenter.m */; };
-		B75089E01AD671E6007867BC /* TCHTTPRequestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B75089D71AD671E6007867BC /* TCHTTPRequestHelper.m */; };
 		B75FBB7F1AD64B3200C46F4B /* DoubanRequestCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B75FBB7E1AD64B3200C46F4B /* DoubanRequestCenter.m */; };
 		B7606A381AD64977001461CA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B7606A371AD64977001461CA /* main.m */; };
 		B7606A3B1AD64977001461CA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B7606A3A1AD64977001461CA /* AppDelegate.m */; };
@@ -30,8 +35,6 @@
 		B7606A431AD64977001461CA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7606A421AD64977001461CA /* Images.xcassets */; };
 		B7606A461AD64977001461CA /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7606A441AD64977001461CA /* LaunchScreen.xib */; };
 		B7606A521AD64977001461CA /* TCHTTPRequestDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B7606A511AD64977001461CA /* TCHTTPRequestDemoTests.m */; };
-		B7A92B171C4151990039461F /* NSURLSessionTask+TCResumeDownload.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A92B161C4151990039461F /* NSURLSessionTask+TCResumeDownload.m */; };
-		B7C169881B2426F500E17602 /* TCBaseResponseValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C169871B2426F500E17602 /* TCBaseResponseValidator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,8 +48,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B715159C1C03F9B300E15862 /* TCHTTPRequest+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TCHTTPRequest+Private.h"; sourceTree = "<group>"; };
-		B715159D1C03F9B300E15862 /* TCHTTPRequest+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TCHTTPRequest+Private.m"; sourceTree = "<group>"; };
 		B71515A01C03FA3700E15862 /* AFHTTPSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPSessionManager.h; sourceTree = "<group>"; };
 		B71515A11C03FA3700E15862 /* AFHTTPSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPSessionManager.m; sourceTree = "<group>"; };
 		B71515A21C03FA3700E15862 /* AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworking.h; sourceTree = "<group>"; };
@@ -60,25 +61,39 @@
 		B71515AA1C03FA3700E15862 /* AFURLResponseSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLResponseSerialization.m; sourceTree = "<group>"; };
 		B71515AB1C03FA3700E15862 /* AFURLSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLSessionManager.h; sourceTree = "<group>"; };
 		B71515AC1C03FA3700E15862 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLSessionManager.m; sourceTree = "<group>"; };
-		B738BE891C8444C3001B1643 /* TCHTTPCachePolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPCachePolicy.h; sourceTree = "<group>"; };
-		B738BE8A1C8444C3001B1643 /* TCHTTPCachePolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPCachePolicy.m; sourceTree = "<group>"; };
+		B72897D41CA93BA0007DA87F /* NSURLSessionTask+TCResumeDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLSessionTask+TCResumeDownload.h"; sourceTree = "<group>"; };
+		B72897D51CA93BA0007DA87F /* NSURLSessionTask+TCResumeDownload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLSessionTask+TCResumeDownload.m"; sourceTree = "<group>"; };
+		B72897D71CA93BA0007DA87F /* TCHTTPCachePolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPCachePolicy.h; sourceTree = "<group>"; };
+		B72897D81CA93BA0007DA87F /* TCHTTPCachePolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPCachePolicy.m; sourceTree = "<group>"; };
+		B72897D91CA93BA0007DA87F /* TCHTTPStreamPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPStreamPolicy.h; sourceTree = "<group>"; };
+		B72897DA1CA93BA0007DA87F /* TCHTTPStreamPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPStreamPolicy.m; sourceTree = "<group>"; };
+		B72897DB1CA93BA0007DA87F /* TCHTTPTimerPolicy+TCHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TCHTTPTimerPolicy+TCHTTPRequest.h"; sourceTree = "<group>"; };
+		B72897DC1CA93BA0007DA87F /* TCHTTPTimerPolicy+TCHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TCHTTPTimerPolicy+TCHTTPRequest.m"; sourceTree = "<group>"; };
+		B72897DD1CA93BA0007DA87F /* TCHTTPTimerPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPTimerPolicy.h; sourceTree = "<group>"; };
+		B72897DE1CA93BA0007DA87F /* TCHTTPTimerPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPTimerPolicy.m; sourceTree = "<group>"; };
+		B72897E01CA93BA0007DA87F /* TCBaseResponseValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCBaseResponseValidator.h; sourceTree = "<group>"; };
+		B72897E11CA93BA0007DA87F /* TCBaseResponseValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCBaseResponseValidator.m; sourceTree = "<group>"; };
+		B72897E21CA93BA0007DA87F /* TCHTTPReqAgentDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPReqAgentDelegate.h; sourceTree = "<group>"; };
+		B72897E31CA93BA0007DA87F /* TCHTTPRequestAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequestAgent.h; sourceTree = "<group>"; };
+		B72897E41CA93BA0007DA87F /* TCHTTPRequestProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequestProtocol.h; sourceTree = "<group>"; };
+		B72897E51CA93BA0007DA87F /* TCHTTPRequestUrlFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequestUrlFilter.h; sourceTree = "<group>"; };
+		B72897E61CA93BA0007DA87F /* TCHTTPRespValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRespValidator.h; sourceTree = "<group>"; };
+		B72897E81CA93BA0007DA87F /* TCHTTPBatchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPBatchRequest.h; sourceTree = "<group>"; };
+		B72897E91CA93BA0007DA87F /* TCHTTPBatchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPBatchRequest.m; sourceTree = "<group>"; };
+		B72897EA1CA93BA0007DA87F /* TCHTTPCacheRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPCacheRequest.h; sourceTree = "<group>"; };
+		B72897EB1CA93BA0007DA87F /* TCHTTPCacheRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPCacheRequest.m; sourceTree = "<group>"; };
+		B72897EC1CA93BA0007DA87F /* TCHTTPRequest+Public.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TCHTTPRequest+Public.h"; sourceTree = "<group>"; };
+		B72897ED1CA93BA0007DA87F /* TCHTTPRequest+Public.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TCHTTPRequest+Public.m"; sourceTree = "<group>"; };
+		B72897EE1CA93BA0007DA87F /* TCHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequest.h; sourceTree = "<group>"; };
+		B72897EF1CA93BA0007DA87F /* TCHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPRequest.m; sourceTree = "<group>"; };
+		B72897F01CA93BA0007DA87F /* TCHTTPRequestCenter+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TCHTTPRequestCenter+Private.h"; sourceTree = "<group>"; };
+		B72897F11CA93BA0007DA87F /* TCHTTPRequestCenter+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TCHTTPRequestCenter+Private.m"; sourceTree = "<group>"; };
+		B72897F21CA93BA0007DA87F /* TCHTTPRequestCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequestCenter.h; sourceTree = "<group>"; };
+		B72897F31CA93BA0007DA87F /* TCHTTPRequestCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPRequestCenter.m; sourceTree = "<group>"; };
+		B72897F41CA93BA0007DA87F /* TCHTTPRequestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequestHelper.h; sourceTree = "<group>"; };
+		B72897F51CA93BA0007DA87F /* TCHTTPRequestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPRequestHelper.m; sourceTree = "<group>"; };
 		B75089BD1AD65A62007867BC /* YahooWeatherRequestCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YahooWeatherRequestCenter.h; sourceTree = "<group>"; };
 		B75089BE1AD65A62007867BC /* YahooWeatherRequestCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YahooWeatherRequestCenter.m; sourceTree = "<group>"; };
-		B75089C91AD671E6007867BC /* TCHTTPRequestCenterProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequestCenterProtocol.h; sourceTree = "<group>"; };
-		B75089CA1AD671E6007867BC /* TCHTTPRequestUrlFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequestUrlFilter.h; sourceTree = "<group>"; };
-		B75089CB1AD671E6007867BC /* TCHTTPResponseValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPResponseValidator.h; sourceTree = "<group>"; };
-		B75089CC1AD671E6007867BC /* TCHTTPBatchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPBatchRequest.h; sourceTree = "<group>"; };
-		B75089CD1AD671E6007867BC /* TCHTTPBatchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPBatchRequest.m; sourceTree = "<group>"; };
-		B75089CE1AD671E6007867BC /* TCHTTPCacheRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPCacheRequest.h; sourceTree = "<group>"; };
-		B75089CF1AD671E6007867BC /* TCHTTPCacheRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPCacheRequest.m; sourceTree = "<group>"; };
-		B75089D01AD671E6007867BC /* TCHTTPRequest+Public.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TCHTTPRequest+Public.h"; sourceTree = "<group>"; };
-		B75089D11AD671E6007867BC /* TCHTTPRequest+Public.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TCHTTPRequest+Public.m"; sourceTree = "<group>"; };
-		B75089D21AD671E6007867BC /* TCHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequest.h; sourceTree = "<group>"; };
-		B75089D31AD671E6007867BC /* TCHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPRequest.m; sourceTree = "<group>"; };
-		B75089D41AD671E6007867BC /* TCHTTPRequestCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequestCenter.h; sourceTree = "<group>"; };
-		B75089D51AD671E6007867BC /* TCHTTPRequestCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPRequestCenter.m; sourceTree = "<group>"; };
-		B75089D61AD671E6007867BC /* TCHTTPRequestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCHTTPRequestHelper.h; sourceTree = "<group>"; };
-		B75089D71AD671E6007867BC /* TCHTTPRequestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCHTTPRequestHelper.m; sourceTree = "<group>"; };
 		B75FBB7D1AD64B3200C46F4B /* DoubanRequestCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubanRequestCenter.h; sourceTree = "<group>"; };
 		B75FBB7E1AD64B3200C46F4B /* DoubanRequestCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DoubanRequestCenter.m; sourceTree = "<group>"; };
 		B7606A321AD64977001461CA /* TCHTTPRequestDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCHTTPRequestDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -94,10 +109,6 @@
 		B7606A4B1AD64977001461CA /* TCHTTPRequestDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TCHTTPRequestDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7606A501AD64977001461CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B7606A511AD64977001461CA /* TCHTTPRequestDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TCHTTPRequestDemoTests.m; sourceTree = "<group>"; };
-		B7A92B151C4151990039461F /* NSURLSessionTask+TCResumeDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLSessionTask+TCResumeDownload.h"; sourceTree = "<group>"; };
-		B7A92B161C4151990039461F /* NSURLSessionTask+TCResumeDownload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLSessionTask+TCResumeDownload.m"; sourceTree = "<group>"; };
-		B7C169861B2426F500E17602 /* TCBaseResponseValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCBaseResponseValidator.h; sourceTree = "<group>"; };
-		B7C169871B2426F500E17602 /* TCBaseResponseValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCBaseResponseValidator.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,43 +149,67 @@
 			path = AFNetworking;
 			sourceTree = "<group>";
 		};
-		B75089C01AD671E6007867BC /* TCNetwork */ = {
+		B72897D31CA93BA0007DA87F /* TCNetwork */ = {
 			isa = PBXGroup;
 			children = (
-				B738BE891C8444C3001B1643 /* TCHTTPCachePolicy.h */,
-				B738BE8A1C8444C3001B1643 /* TCHTTPCachePolicy.m */,
-				B7A92B151C4151990039461F /* NSURLSessionTask+TCResumeDownload.h */,
-				B7A92B161C4151990039461F /* NSURLSessionTask+TCResumeDownload.m */,
-				B715159C1C03F9B300E15862 /* TCHTTPRequest+Private.h */,
-				B715159D1C03F9B300E15862 /* TCHTTPRequest+Private.m */,
-				B75089C81AD671E6007867BC /* Protocol */,
-				B75089CC1AD671E6007867BC /* TCHTTPBatchRequest.h */,
-				B75089CD1AD671E6007867BC /* TCHTTPBatchRequest.m */,
-				B75089CE1AD671E6007867BC /* TCHTTPCacheRequest.h */,
-				B75089CF1AD671E6007867BC /* TCHTTPCacheRequest.m */,
-				B75089D01AD671E6007867BC /* TCHTTPRequest+Public.h */,
-				B75089D11AD671E6007867BC /* TCHTTPRequest+Public.m */,
-				B75089D21AD671E6007867BC /* TCHTTPRequest.h */,
-				B75089D31AD671E6007867BC /* TCHTTPRequest.m */,
-				B75089D41AD671E6007867BC /* TCHTTPRequestCenter.h */,
-				B75089D51AD671E6007867BC /* TCHTTPRequestCenter.m */,
-				B75089D61AD671E6007867BC /* TCHTTPRequestHelper.h */,
-				B75089D71AD671E6007867BC /* TCHTTPRequestHelper.m */,
+				B72897D41CA93BA0007DA87F /* NSURLSessionTask+TCResumeDownload.h */,
+				B72897D51CA93BA0007DA87F /* NSURLSessionTask+TCResumeDownload.m */,
+				B72897D61CA93BA0007DA87F /* Policy */,
+				B72897DF1CA93BA0007DA87F /* Protocol */,
+				B72897E71CA93BA0007DA87F /* Request */,
+				B72897F01CA93BA0007DA87F /* TCHTTPRequestCenter+Private.h */,
+				B72897F11CA93BA0007DA87F /* TCHTTPRequestCenter+Private.m */,
+				B72897F21CA93BA0007DA87F /* TCHTTPRequestCenter.h */,
+				B72897F31CA93BA0007DA87F /* TCHTTPRequestCenter.m */,
+				B72897F41CA93BA0007DA87F /* TCHTTPRequestHelper.h */,
+				B72897F51CA93BA0007DA87F /* TCHTTPRequestHelper.m */,
 			);
 			name = TCNetwork;
 			path = ../TCNetwork;
 			sourceTree = "<group>";
 		};
-		B75089C81AD671E6007867BC /* Protocol */ = {
+		B72897D61CA93BA0007DA87F /* Policy */ = {
 			isa = PBXGroup;
 			children = (
-				B7C169861B2426F500E17602 /* TCBaseResponseValidator.h */,
-				B7C169871B2426F500E17602 /* TCBaseResponseValidator.m */,
-				B75089C91AD671E6007867BC /* TCHTTPRequestCenterProtocol.h */,
-				B75089CA1AD671E6007867BC /* TCHTTPRequestUrlFilter.h */,
-				B75089CB1AD671E6007867BC /* TCHTTPResponseValidator.h */,
+				B72897D71CA93BA0007DA87F /* TCHTTPCachePolicy.h */,
+				B72897D81CA93BA0007DA87F /* TCHTTPCachePolicy.m */,
+				B72897D91CA93BA0007DA87F /* TCHTTPStreamPolicy.h */,
+				B72897DA1CA93BA0007DA87F /* TCHTTPStreamPolicy.m */,
+				B72897DB1CA93BA0007DA87F /* TCHTTPTimerPolicy+TCHTTPRequest.h */,
+				B72897DC1CA93BA0007DA87F /* TCHTTPTimerPolicy+TCHTTPRequest.m */,
+				B72897DD1CA93BA0007DA87F /* TCHTTPTimerPolicy.h */,
+				B72897DE1CA93BA0007DA87F /* TCHTTPTimerPolicy.m */,
+			);
+			path = Policy;
+			sourceTree = "<group>";
+		};
+		B72897DF1CA93BA0007DA87F /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				B72897E01CA93BA0007DA87F /* TCBaseResponseValidator.h */,
+				B72897E11CA93BA0007DA87F /* TCBaseResponseValidator.m */,
+				B72897E21CA93BA0007DA87F /* TCHTTPReqAgentDelegate.h */,
+				B72897E31CA93BA0007DA87F /* TCHTTPRequestAgent.h */,
+				B72897E41CA93BA0007DA87F /* TCHTTPRequestProtocol.h */,
+				B72897E51CA93BA0007DA87F /* TCHTTPRequestUrlFilter.h */,
+				B72897E61CA93BA0007DA87F /* TCHTTPRespValidator.h */,
 			);
 			path = Protocol;
+			sourceTree = "<group>";
+		};
+		B72897E71CA93BA0007DA87F /* Request */ = {
+			isa = PBXGroup;
+			children = (
+				B72897E81CA93BA0007DA87F /* TCHTTPBatchRequest.h */,
+				B72897E91CA93BA0007DA87F /* TCHTTPBatchRequest.m */,
+				B72897EA1CA93BA0007DA87F /* TCHTTPCacheRequest.h */,
+				B72897EB1CA93BA0007DA87F /* TCHTTPCacheRequest.m */,
+				B72897EC1CA93BA0007DA87F /* TCHTTPRequest+Public.h */,
+				B72897ED1CA93BA0007DA87F /* TCHTTPRequest+Public.m */,
+				B72897EE1CA93BA0007DA87F /* TCHTTPRequest.h */,
+				B72897EF1CA93BA0007DA87F /* TCHTTPRequest.m */,
+			);
+			path = Request;
 			sourceTree = "<group>";
 		};
 		B75FBB801AD64FD800C46F4B /* Dependencies */ = {
@@ -197,7 +232,7 @@
 		B7606A291AD64977001461CA = {
 			isa = PBXGroup;
 			children = (
-				B75089C01AD671E6007867BC /* TCNetwork */,
+				B72897D31CA93BA0007DA87F /* TCNetwork */,
 				B75FBB801AD64FD800C46F4B /* Dependencies */,
 				B7606A341AD64977001461CA /* TCHTTPRequestDemo */,
 				B7606A4E1AD64977001461CA /* TCHTTPRequestDemoTests */,
@@ -359,27 +394,30 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B72897FD1CA93BA0007DA87F /* TCHTTPCacheRequest.m in Sources */,
+				B72897FB1CA93BA0007DA87F /* TCBaseResponseValidator.m in Sources */,
 				B7606A3E1AD64977001461CA /* ViewController.m in Sources */,
-				B75089DE1AD671E6007867BC /* TCHTTPRequest.m in Sources */,
-				B715159E1C03F9B300E15862 /* TCHTTPRequest+Private.m in Sources */,
-				B75089E01AD671E6007867BC /* TCHTTPRequestHelper.m in Sources */,
-				B75089DB1AD671E6007867BC /* TCHTTPBatchRequest.m in Sources */,
 				B71515AD1C03FA3700E15862 /* AFHTTPSessionManager.m in Sources */,
-				B75089DD1AD671E6007867BC /* TCHTTPRequest+Public.m in Sources */,
 				B71515AE1C03FA3700E15862 /* AFNetworkReachabilityManager.m in Sources */,
-				B738BE8B1C8444C3001B1643 /* TCHTTPCachePolicy.m in Sources */,
-				B7A92B171C4151990039461F /* NSURLSessionTask+TCResumeDownload.m in Sources */,
 				B7606A3B1AD64977001461CA /* AppDelegate.m in Sources */,
+				B72897F61CA93BA0007DA87F /* NSURLSessionTask+TCResumeDownload.m in Sources */,
+				B72897F91CA93BA0007DA87F /* TCHTTPTimerPolicy+TCHTTPRequest.m in Sources */,
+				B72897FA1CA93BA0007DA87F /* TCHTTPTimerPolicy.m in Sources */,
+				B72898001CA93BA0007DA87F /* TCHTTPRequestCenter+Private.m in Sources */,
 				B75089BF1AD65A62007867BC /* YahooWeatherRequestCenter.m in Sources */,
 				B71515B21C03FA3700E15862 /* AFURLSessionManager.m in Sources */,
+				B72898011CA93BA0007DA87F /* TCHTTPRequestCenter.m in Sources */,
 				B71515B11C03FA3700E15862 /* AFURLResponseSerialization.m in Sources */,
-				B7C169881B2426F500E17602 /* TCBaseResponseValidator.m in Sources */,
-				B75089DC1AD671E6007867BC /* TCHTTPCacheRequest.m in Sources */,
 				B71515B01C03FA3700E15862 /* AFURLRequestSerialization.m in Sources */,
 				B71515AF1C03FA3700E15862 /* AFSecurityPolicy.m in Sources */,
+				B72898021CA93BA0007DA87F /* TCHTTPRequestHelper.m in Sources */,
+				B72897FC1CA93BA0007DA87F /* TCHTTPBatchRequest.m in Sources */,
 				B7606A381AD64977001461CA /* main.m in Sources */,
-				B75089DF1AD671E6007867BC /* TCHTTPRequestCenter.m in Sources */,
+				B72897F71CA93BA0007DA87F /* TCHTTPCachePolicy.m in Sources */,
+				B72897FF1CA93BA0007DA87F /* TCHTTPRequest.m in Sources */,
+				B72897F81CA93BA0007DA87F /* TCHTTPStreamPolicy.m in Sources */,
 				B75FBB7F1AD64B3200C46F4B /* DoubanRequestCenter.m in Sources */,
+				B72897FE1CA93BA0007DA87F /* TCHTTPRequest+Public.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

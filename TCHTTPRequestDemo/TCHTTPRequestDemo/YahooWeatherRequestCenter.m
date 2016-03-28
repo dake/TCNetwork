@@ -25,13 +25,13 @@ static NSString *const kHost = @"http://weather.yahooapis.com/";
 }
 
 
-- (TCHTTPRequest *)fetchWeatherForWOEID:(NSString *)woeiID beforeRun:(void(^)(TCHTTPRequest *request))beforeRun
+- (id<TCHTTPRequest>)fetchWeatherForWOEID:(NSString *)woeiID beforeRun:(void(^)(id<TCHTTPRequest> request))beforeRun
 {
     if (nil == woeiID || woeiID.length < 1) {
         return nil;
     }
 
-    TCHTTPRequest *request = [self requestWithMethod:kTCHTTPRequestMethodGet apiUrl:@"forecastrss" host:nil];
+    id<TCHTTPRequest> request = [self requestWithMethod:kTCHTTPMethodGet apiUrl:@"forecastrss" host:nil];
     if (nil != beforeRun) {
         beforeRun(request);
     }
