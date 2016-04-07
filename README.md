@@ -2,7 +2,7 @@
 
 ## What
 
-**TCNetwork 2.0** is a high level http request capsule based on [AFNetworking 3.0][AFNetworking]. 
+**TCNetwork 2.0** is a high level http request capsule based on [AFNetworking 3.x][AFNetworking]. 
 Thanks to [YTKNetwork][YTKNetwork].
 
 Still using AFNetworking 2.x ? see [TCNetwork 1.0](https://github.com/dake/TCNetwork/tree/v1.0)
