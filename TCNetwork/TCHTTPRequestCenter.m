@@ -20,11 +20,11 @@
 {
 @private
     AFHTTPSessionManager *_requestManager;
-    NSMutableDictionary *_requestPool;
-    NSLock *_poolLock;
+    NSMutableDictionary<NSNumber *, NSMutableDictionary<id<NSCoding>, id<TCHTTPRequest>> *> *_requestPool;
+    NSRecursiveLock *_poolLock;
     
     NSString *_cachePathForResponse;
-    Class _responseValidorClass;
+    __unsafe_unretained Class _responseValidorClass;
     
     NSURLSessionConfiguration *_sessionConfiguration;
     
@@ -122,7 +122,7 @@
 {
     self = [super init];
     if (self) {
-        _poolLock = [[NSLock alloc] init];
+        _poolLock = [[NSRecursiveLock alloc] init];
         _poolLock.name = @"requestPoolLock.TCNetwork.TCKit";
         _requestPool = NSMutableDictionary.dictionary;
         
@@ -389,7 +389,7 @@
     NSParameterAssert(url);
     
     NSDictionary *param = request.parameters;
-    if ([self.urlFilter respondsToSelector:@selector(filteredParamForParam:)]) {
+    if (!request.ignoreParamFilter && [self.urlFilter respondsToSelector:@selector(filteredParamForParam:)]) {
         param = [self.urlFilter filteredParamForParam:param];
     }
     
@@ -506,26 +506,25 @@
         dic = NSMutableDictionary.dictionary;
         _requestPool[key] = dic;
     }
-    [_poolLock unlock];
     
-    @synchronized(dic) {
+    NSString *identifier = request.identifier;
+    id<TCHTTPRequest> preRequest = dic[identifier];
+    if (request == preRequest) {
+        [_poolLock unlock];
+        return;
+    }
     
-        NSString *identifier = request.identifier;
-        id<TCHTTPRequest> preRequest = dic[identifier];
-        if (request == preRequest) {
+    if (nil != preRequest) {
+        if (!request.overrideIfImpact) {
+            [_poolLock unlock];
             return;
         }
-        
-        if (nil != preRequest) {
-            if (request.abandonWhenImpact) {
-                return;
-            }
-            [dic removeObjectForKey:identifier];
-            [preRequest cancel];
-        }
-        
-        dic[identifier] = request;
+        [dic removeObjectForKey:identifier];
+        [preRequest cancel]; // !!!: may call [_poolLock lock];
     }
+    
+    dic[identifier] = request;
+    [_poolLock unlock];
 }
 
 
@@ -536,41 +535,38 @@
 
 - (void)removeRequest:(id<TCHTTPRequest>)mRequest forObserver:(__unsafe_unretained id)observer forIdentifier:(id<NSCopying>)identifier
 {
-    NSNumber *key = @((NSUInteger)(__bridge void *)(observer));
+    NSNumber *key = @((int)(__bridge void *)(observer));
     
     [_poolLock lock];
     NSMutableDictionary *dic = _requestPool[key];
-    [_poolLock unlock];
+    
     
     if (nil == dic) {
+        [_poolLock unlock];
         return;
     }
     
-    @synchronized(dic) {
+    if (nil != identifier) {
+        id<TCHTTPRequest> request = dic[identifier];
+        if (nil != mRequest && request != mRequest) {
+            [_poolLock unlock];
+            return;
+        }
         
-        if (nil != identifier) {
-            id<TCHTTPRequest> request = dic[identifier];
-            if (nil != mRequest && request != mRequest) {
-                return;
+        if (nil != request) {
+            [dic removeObjectForKey:identifier];
+            if (dic.count < 1) {
+                [_requestPool removeObjectForKey:key];
             }
             
-            if (nil != request) {
-                [dic removeObjectForKey:identifier];
-                if (dic.count < 1) {
-                    [_poolLock lock];
-                    [_requestPool removeObjectForKey:key];
-                    [_poolLock unlock];
-                }
-                
-                [request cancel];
-            }
-        } else {
-            [_poolLock lock];
-            [_requestPool removeObjectForKey:key];
-            [_poolLock unlock];
-            [dic.allValues makeObjectsPerformSelector:@selector(cancel)];
+            [request cancel];
         }
+    } else {
+        [_requestPool removeObjectForKey:key];
+        [dic.allValues makeObjectsPerformSelector:@selector(cancel)];
     }
+    
+    [_poolLock unlock];
 }
 
 - (void)removeRequestObserver:(__unsafe_unretained id)observer forIdentifier:(id<NSCopying>)identifier
@@ -581,6 +577,18 @@
 - (void)removeRequestObserver:(__unsafe_unretained id)observer
 {
     [self removeRequestObserver:observer forIdentifier:nil];
+}
+
+- (void)removeAllRequests
+{
+    [_poolLock lock];
+    for (id key in _requestPool) {
+        NSArray *requests = _requestPool[key].allValues;
+        if (nil != requests) {
+            [requests makeObjectsPerformSelector:@selector(cancel)];
+        }
+    }
+    [_poolLock unlock];
 }
 
 - (void)removeAllCachedResponses

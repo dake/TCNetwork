@@ -35,6 +35,7 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequestCenter : NSObject <TCHTTPReq
 
 - (void)removeRequestObserver:(__unsafe_unretained id)observer forIdentifier:(id<NSCopying>)identifier;
 - (void)removeRequestObserver:(__unsafe_unretained id)observer;
+- (void)removeAllRequests;
 
 - (NSString *)cachePathForResponse;
 - (NSString *)cacheDomainForResponse;

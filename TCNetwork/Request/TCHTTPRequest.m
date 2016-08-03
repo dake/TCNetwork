@@ -31,6 +31,7 @@
 {
     self = [super init];
     if (self) {
+        _overrideIfImpact = YES;
         _timeoutInterval = 30.0f;
     }
     return self;

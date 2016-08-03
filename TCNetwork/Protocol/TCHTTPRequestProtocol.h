@@ -84,11 +84,12 @@ typedef NS_ENUM(NSInteger, TCHTTPMethod) {
 @property (nonatomic, copy) NSString *baseUrl; // "http://eet/oo/"
 
 // Auto convert to query string, if requestMethod is GET
-@property (nonatomic, strong) NSDictionary *parameters;
+@property (nonatomic, strong) NSDictionary<NSString *, id> *parameters;
 @property (nonatomic, assign) NSTimeInterval timeoutInterval; // default: 30s
 @property (nonatomic, assign) TCHTTPMethod method;
 
-@property (nonatomic, assign) BOOL abandonWhenImpact; // abandon current request, if a same one exist
+@property (nonatomic, assign) BOOL overrideIfImpact; // default: YES, NO: abandon current request, if a same one existed
+@property (nonatomic, assign) BOOL ignoreParamFilter;
 
 
 

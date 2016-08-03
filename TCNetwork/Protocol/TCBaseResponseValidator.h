@@ -13,7 +13,10 @@
 
 @property (nonatomic, strong) id data;
 @property (nonatomic, assign) BOOL success;
+@property (nonatomic, copy) NSString *successMsg;
 @property (nonatomic, strong) NSError *error;
+
+@property (nonatomic, strong) NSDictionary<NSString *, NSArray<NSNumber *> *> *errorFilter;
 
 - (BOOL)validateHTTPResponse:(id)obj fromCache:(BOOL)fromCache;
 

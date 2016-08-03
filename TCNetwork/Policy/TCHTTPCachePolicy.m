@@ -158,6 +158,16 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
     return self.cacheState == kTCCachedRespValid;
 }
 
+- (NSDate *)cacheDate
+{
+    TCCachedRespState state = self.cacheState;
+    if (kTCCachedRespExpired == state || kTCCachedRespValid == state) {
+        return [NSFileManager.defaultManager attributesOfItemAtPath:self.cacheFilePath error:NULL].fileModificationDate;
+    }
+    
+    return nil;
+}
+
 - (BOOL)isDataFromCache
 {
     return nil != _cachedResponse;

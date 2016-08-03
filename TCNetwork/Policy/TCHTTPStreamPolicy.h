@@ -16,8 +16,8 @@ typedef void (^AFConstructingBlock)(id<AFMultipartFormData> formData);
 @interface TCHTTPStreamPolicy : NSObject
 
 @property (nonatomic, weak) id<TCHTTPRequest> request;
-
 @property (nonatomic, strong) NSProgress *progress;
+
 
 #pragma mark - Upload
 

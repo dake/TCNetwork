@@ -29,6 +29,7 @@ extern NSInteger const kTCHTTPRequestCacheNeverExpired;
 
 - (BOOL)isCacheValid;
 - (BOOL)isDataFromCache;
+- (NSDate *)cacheDate;
 - (TCCachedRespState)cacheState;
 
 
