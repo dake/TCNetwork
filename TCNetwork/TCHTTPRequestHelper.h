@@ -10,16 +10,18 @@
 
 @interface TCHTTPRequestHelper : NSObject
 
-+ (NSString *)urlString:(NSString *)originUrlString appendParameters:(NSDictionary *)parameters;
-
 + (NSString *)MD5_32:(NSString *)str;
 + (NSString *)MD5_16:(NSString *)str;
 
 @end
 
 
-@interface NSDictionary (TCHTTPRequestHelper)
+#ifndef __TCKit__
 
-- (NSString *)convertToHttpQuery;
+@interface NSURL (TCHTTPRequestHelper)
+
+- (instancetype)appendParamIfNeed:(NSDictionary<NSString *, id> *)param;
 
 @end
+
+#endif // __TCKit__

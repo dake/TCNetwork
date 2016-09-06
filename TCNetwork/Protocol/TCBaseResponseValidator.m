@@ -59,11 +59,13 @@
         if (nil != err) {
             typeof(_errorFilter) sFilter = self.class.errorFilter;
             typeof(_errorFilter) filter = self.errorFilter;
+            
             if (filter.count < 1) {
                 filter = sFilter;
+                
             } else if (sFilter.count > 0) {
-                NSMutableDictionary *dic = filter.mutableCopy;
-                [dic addEntriesFromDictionary:sFilter];
+                NSMutableDictionary *dic = sFilter.mutableCopy;
+                [dic addEntriesFromDictionary:filter];
                 filter = dic;
             }
             

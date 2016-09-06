@@ -20,7 +20,7 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequest : NSObject <TCHTTPRequest, 
 //
 @property (nonatomic, weak) id<TCHTTPRequestDelegate> delegate;
 @property (nonatomic, copy) void (^resultBlock)(id<TCHTTPRequest> request, BOOL success);
-
+@property (nonatomic, weak) id observer;
 @property (nonatomic, strong) id<TCHTTPRespValidator> responseValidator;
 
 
@@ -43,12 +43,9 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface TCHTTPRequest : NSObject <TCHTTPRequest, 
 @property (nonatomic, assign) TCHTTPMethod method;
 @property (nonatomic, assign) BOOL overrideIfImpact; // default: YES, NO: abandon current request, if a same one existed
 @property (nonatomic, assign) BOOL ignoreParamFilter;
-//@property (nonatomic, assign) BOOL shouldIgnore
 
 
 - (instancetype)initWithMethod:(TCHTTPMethod)method;
-
-- (void)setObserver:(__unsafe_unretained id)observer;
 
 /**
  @brief	start a http request with checking available cache,

@@ -48,7 +48,7 @@ NSInteger const kTCHTTPRequestCacheNeverExpired = -1;
     
     NSString *requestUrl = nil;
     if (nil != _request.requestAgent && [_request.requestAgent respondsToSelector:@selector(buildRequestUrlForRequest:)]) {
-        requestUrl = [_request.requestAgent buildRequestUrlForRequest:_request];
+        requestUrl = [_request.requestAgent buildRequestUrlForRequest:_request].absoluteString;
     } else {
         requestUrl = _request.apiUrl;
     }

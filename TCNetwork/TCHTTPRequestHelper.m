@@ -15,22 +15,6 @@
 
 @implementation TCHTTPRequestHelper
 
-+ (NSString *)urlString:(NSString *)originUrlString appendParameters:(NSDictionary *)parameters
-{
-    NSString *url = originUrlString;
-    NSString *paraUrlString = parameters.convertToHttpQuery;
-    
-    if (nil != paraUrlString && paraUrlString.length > 0) {
-        if ([originUrlString rangeOfString:@"?"].location != NSNotFound) {
-            url = [originUrlString stringByAppendingString:paraUrlString];
-        } else {
-            url = [originUrlString stringByAppendingFormat:@"?%@", [paraUrlString substringFromIndex:1]];
-        }
-    }
-    
-    return url;
-}
-
 
 #pragma mark - MD5
 
@@ -71,23 +55,36 @@
 @end
 
 
-@implementation NSDictionary (TCHTTPRequestHelper)
+#ifndef __TCKit__
 
-- (NSString *)convertToHttpQuery
+@implementation NSURL (TCHTTPRequestHelper)
+
+- (instancetype)appendParamIfNeed:(NSDictionary<NSString *, id> *)param
 {
-    NSMutableString *queryString = nil;
-    if (self.count > 0) {
-        queryString = [NSMutableString string];
-        for (NSString *key in self.allKeys) {
-            NSString *value = self[key];
-            if (nil != value) {
-                value = [NSString stringWithFormat:@"%@", value];
-                value = (__bridge_transfer NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (__bridge CFStringRef)value, CFSTR("."), CFSTR(":/?#[]@!$&'()*+,;="), kCFStringEncodingUTF8);
-                [queryString appendFormat:queryString.length > 0 ? @"&%@=%@" : @"%@=%@", key, value];
-            }
+    if (param.count < 1) {
+        return self;
+    }
+    
+    // NSURLComponents 自带 url encoding, property 自动 decoding
+    NSURLComponents *com = [[NSURLComponents alloc] initWithURL:self resolvingAgainstBaseURL:NO];
+    NSMutableString *query = NSMutableString.string;
+    NSString *rawQuery = com.query;
+    if (nil != rawQuery) {
+        [query appendString:rawQuery];
+    }
+    
+    for (NSString *key in param) {
+        if (nil == com.query || [com.query rangeOfString:key].location == NSNotFound) {
+            [query appendFormat:(query.length > 0 ? @"&%@" : @"%@"), [key stringByAppendingFormat:@"=%@", param[key]]];
+        } else {
+            NSAssert(false, @"conflict query param");
         }
     }
-    return queryString;
+    com.query = query;
+    
+    return com.URL;
 }
 
 @end
+
+#endif // __TCKit__

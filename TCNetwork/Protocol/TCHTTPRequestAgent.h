@@ -18,7 +18,7 @@
 
 - (BOOL)canAddRequest:(id<TCHTTPRequest>)request error:(NSError **)error;
 - (BOOL)addRequest:(id<TCHTTPRequest>)request error:(NSError **)error;
-- (NSString *)buildRequestUrlForRequest:(id<TCHTTPRequest>)request;
+- (NSURL *)buildRequestUrlForRequest:(id<TCHTTPRequest>)request;
 
 // cache 
 - (NSString *)cachePathForResponse;

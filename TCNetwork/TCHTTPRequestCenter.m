@@ -20,13 +20,13 @@
 {
 @private
     AFHTTPSessionManager *_requestManager;
-    NSMutableDictionary<NSNumber *, NSMutableDictionary<id<NSCoding>, id<TCHTTPRequest>> *> *_requestPool;
+    NSMapTable<id, NSMapTable<id<NSCoding>, id<TCHTTPRequest>> *> *_requestPool;
     NSRecursiveLock *_poolLock;
     
-    NSString *_cachePathForResponse;
-    __unsafe_unretained Class _responseValidorClass;
+    NSString *_cachePathForResp;
+    __unsafe_unretained Class _respValidorClass;
     
-    NSURLSessionConfiguration *_sessionConfiguration;
+    NSURLSessionConfiguration *_sessionConfig;
     
     AFSecurityPolicy *_securityPolicy;
     NSCache *_memCache;
@@ -34,20 +34,20 @@
 
 + (instancetype)defaultCenter
 {
-    static NSMutableDictionary *centers = nil;
+    static NSMapTable<Class, __kindof TCHTTPRequestCenter *> *centers = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        centers = NSMutableDictionary.dictionary;
+        centers = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPointerPersonality
+                                        valueOptions:NSPointerFunctionsStrongMemory | NSPointerFunctionsObjectPointerPersonality];
     });
     
     TCHTTPRequestCenter *obj = nil;
     @synchronized(centers) {
-        NSString *key = NSStringFromClass(self.class);
-        obj = centers[key];
+        obj = [centers objectForKey:self];
         if (nil == obj) {
             obj = [[self alloc] initWithBaseURL:nil sessionConfiguration:nil];
             if (nil != obj) {
-                centers[key] = obj;
+                [centers setObject:obj forKey:self];
             }
         }
     }
@@ -57,12 +57,12 @@
 
 - (Class)responseValidorClass
 {
-    return _responseValidorClass ?: TCBaseResponseValidator.class;
+    return _respValidorClass ?: TCBaseResponseValidator.class;
 }
 
 - (void)registerResponseValidatorClass:(Class)validatorClass
 {
-    _responseValidorClass = validatorClass;
+    _respValidorClass = validatorClass;
 }
 
 - (BOOL)networkReachable
@@ -88,16 +88,16 @@
 
 - (NSString *)cachePathForResponse
 {
-    if (nil == _cachePathForResponse) {
+    if (nil == _cachePathForResp) {
         NSString *path = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject];
-        _cachePathForResponse = [path stringByAppendingPathComponent:@"TCHTTPRequestCache"];
+        _cachePathForResp = [path stringByAppendingPathComponent:@"TCHTTPRequestCache"];
         NSString *domain = self.cacheDomainForResponse;
         if (domain.length > 0) {
-            _cachePathForResponse = [_cachePathForResponse stringByAppendingPathComponent:domain];
+            _cachePathForResp = [_cachePathForResp stringByAppendingPathComponent:domain];
         }
     }
     
-    return _cachePathForResponse;
+    return _cachePathForResp;
 }
 
 - (NSString *)cacheDomainForResponse
@@ -124,17 +124,18 @@
     if (self) {
         _poolLock = [[NSRecursiveLock alloc] init];
         _poolLock.name = @"requestPoolLock.TCNetwork.TCKit";
-        _requestPool = NSMutableDictionary.dictionary;
+        _requestPool = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPointerPersonality
+                                             valueOptions:NSPointerFunctionsStrongMemory | NSPointerFunctionsObjectPersonality];
         
         _memCache = [[NSCache alloc] init];
     }
     return self;
 }
 
-- (NSString *)requestManagerIdentifier
+- (NSString *)requestManagerPrint
 {
     NSUInteger policyHash = self.innerSecurityPolicy.hash;
-    NSUInteger configurationHash = _sessionConfiguration.hash;
+    NSUInteger configurationHash = _sessionConfig.hash;
     
     
     NSUInteger contentTypeHash = 0;
@@ -155,45 +156,45 @@
         return nil;
     }
     
-    static NSMutableDictionary<NSString *, AFHTTPSessionManager *> *s_mngrPool;
+    static NSMapTable<NSString *, AFHTTPSessionManager *> *s_mngrPool = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        s_mngrPool = NSMutableDictionary.dictionary;
+        s_mngrPool = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory | NSPointerFunctionsObjectPersonality
+                                           valueOptions:NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPointerPersonality];
     });
     
-    AFHTTPSessionManager *requestManager = nil;
+    AFHTTPSessionManager *reqMngr = nil;
     @synchronized(s_mngrPool) {
-        requestManager = s_mngrPool[identifier];
-        if (nil == requestManager) {
-            requestManager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:_sessionConfiguration];
-            requestManager.requestSerializer.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        reqMngr = [s_mngrPool objectForKey:identifier];
+        if (nil == reqMngr) {
+            reqMngr = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:_sessionConfig];
+            reqMngr.requestSerializer.cachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
             AFSecurityPolicy *policy = self.innerSecurityPolicy;
             if (nil != policy) {
-                requestManager.securityPolicy = policy;
+                reqMngr.securityPolicy = policy;
             }
             
             if (nil != self.acceptableContentTypes) {
-                NSMutableSet *set = requestManager.responseSerializer.acceptableContentTypes.mutableCopy;
+                NSMutableSet *set = reqMngr.responseSerializer.acceptableContentTypes.mutableCopy;
                 [set unionSet:self.acceptableContentTypes];
-                requestManager.responseSerializer.acceptableContentTypes = set;
+                reqMngr.responseSerializer.acceptableContentTypes = set;
                 self.acceptableContentTypes = nil;
             }
             
-            [requestManager.reachabilityManager startMonitoring];
-            
-            s_mngrPool[identifier] = requestManager;
+            [reqMngr.reachabilityManager startMonitoring];
+            [s_mngrPool setObject:reqMngr forKey:identifier];
         }
     }
     
-    _sessionConfiguration = nil;
+    _sessionConfig = nil;
     
-    return requestManager;
+    return reqMngr;
 }
 
 - (AFHTTPSessionManager *)requestManager
 {
     if (nil == _requestManager) {
-        _requestManager = [self dequeueRequestManagerWithIdentifier:self.requestManagerIdentifier];
+        _requestManager = [self dequeueRequestManagerWithIdentifier:self.requestManagerPrint];
     }
     
     return _requestManager;
@@ -204,7 +205,7 @@
     self = [self init];
     if (self) {
         _baseURL = url;
-        _sessionConfiguration = configuration;
+        _sessionConfig = configuration;
     }
     return self;
 }
@@ -290,7 +291,7 @@
     return YES;
 }
 
-- (void)fireDownloadTaskFor:(id<TCHTTPRequest, TCHTTPReqAgentDelegate>)request downloadUrl:(NSString *)downloadUrl successBlock:(void (^)())successBlock failureBlock:(void (^)())failureBlock
+- (void)fireDownloadTaskFor:(id<TCHTTPRequest, TCHTTPReqAgentDelegate>)request downloadUrl:(NSURL *)downloadUrl successBlock:(void (^)())successBlock failureBlock:(void (^)())failureBlock
 {
     NSParameterAssert(request);
     NSParameterAssert(downloadUrl);
@@ -321,7 +322,7 @@
     };
     
     AFHTTPSessionManager *requestMgr = self.requestManager;
-    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:downloadUrl]
+    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:downloadUrl
                                                 cachePolicy:requestMgr.requestSerializer.cachePolicy
                                             timeoutInterval:requestMgr.requestSerializer.timeoutInterval];
     
@@ -373,8 +374,9 @@
     NSURLSessionTask *task = nil;
     AFHTTPSessionManager *requestMgr = self.requestManager;
     
-    if (polling) {
-        task = [requestMgr dataTaskWithRequest:request.requestTask.originalRequest.copy completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+    if (polling && nil != request.requestTask.originalRequest) {
+        NSURLRequest *req = request.requestTask.originalRequest.copy;
+        task = [requestMgr dataTaskWithRequest:req completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
             if (nil != error) {
                 failureBlock(task, error);
             } else {
@@ -385,7 +387,7 @@
         return;
     }
     
-    NSString *url = [self buildRequestUrlForRequest:request];
+    NSURL *url = [self buildRequestUrlForRequest:request];
     NSParameterAssert(url);
     
     NSDictionary *param = request.parameters;
@@ -396,18 +398,18 @@
     switch (request.method) {
             
         case kTCHTTPMethodGet: {
-            task = [requestMgr GET:url parameters:param progress:nil success:successBlock failure:failureBlock];
+            task = [requestMgr GET:url.absoluteString parameters:param progress:nil success:successBlock failure:failureBlock];
             break;
         }
             
         case kTCHTTPMethodPost: {
             if (nil != request.streamPolicy.constructingBodyBlock) {
-                task = [requestMgr POST:url parameters:param constructingBodyWithBlock:request.streamPolicy.constructingBodyBlock progress:^(NSProgress * _Nonnull uploadProgress) {
+                task = [requestMgr POST:url.absoluteString parameters:param constructingBodyWithBlock:request.streamPolicy.constructingBodyBlock progress:^(NSProgress * _Nonnull uploadProgress) {
                     request.streamPolicy.progress = uploadProgress;
                 } success:successBlock failure:failureBlock];
                 request.streamPolicy.constructingBodyBlock = nil;
             } else {
-                task = [requestMgr POST:url parameters:param progress:^(NSProgress * _Nonnull uploadProgress) {
+                task = [requestMgr POST:url.absoluteString parameters:param progress:^(NSProgress * _Nonnull uploadProgress) {
                     request.streamPolicy.progress = uploadProgress;
                 } success:successBlock failure:failureBlock];
             }
@@ -415,35 +417,35 @@
         }
             
         case kTCHTTPMethodPut: {
-            task = [requestMgr PUT:url parameters:param success:successBlock failure:failureBlock];
+            task = [requestMgr PUT:url.absoluteString parameters:param success:successBlock failure:failureBlock];
             break;
         }
             
         case kTCHTTPMethodDownload: {
             NSParameterAssert(request.streamPolicy.downloadDestinationPath);
-            NSString *downloadUrl = [TCHTTPRequestHelper urlString:url appendParameters:param];
-            NSParameterAssert(downloadUrl);
+            NSURL *downloadURL = [url appendParamIfNeed:param];
+            NSParameterAssert(downloadURL);
             
-            if (downloadUrl.length < 1 || request.streamPolicy.downloadDestinationPath.length < 1) {
+            if (nil == downloadURL || request.streamPolicy.downloadDestinationPath.length < 1) {
                 break; // !!!: break here, no return
             }
             
-            [self fireDownloadTaskFor:request downloadUrl:downloadUrl successBlock:successBlock failureBlock:failureBlock];
+            [self fireDownloadTaskFor:request downloadUrl:downloadURL successBlock:successBlock failureBlock:failureBlock];
             return;
         }
             
         case kTCHTTPMethodHead: {
-            task = [requestMgr HEAD:url parameters:param success:successBlock failure:failureBlock];
+            task = [requestMgr HEAD:url.absoluteString parameters:param success:successBlock failure:failureBlock];
             break;
         }
             
         case kTCHTTPMethodDelete: {
-            task = [requestMgr DELETE:url parameters:param success:successBlock failure:failureBlock];
+            task = [requestMgr DELETE:url.absoluteString parameters:param success:successBlock failure:failureBlock];
             break;
         }
             
         case kTCHTTPMethodPatch: {
-            task = [requestMgr PATCH:url parameters:param success:successBlock failure:failureBlock];
+            task = [requestMgr PATCH:url.absoluteString parameters:param success:successBlock failure:failureBlock];
             break;
         }
             
@@ -498,17 +500,15 @@
 {
     NSParameterAssert(request);
     
-    NSNumber *key = @((NSUInteger)request.observer);
-    
     [_poolLock lock];
-    NSMutableDictionary *dic = _requestPool[key];
-    if (nil == dic) {
-        dic = NSMutableDictionary.dictionary;
-        _requestPool[key] = dic;
+    NSMapTable<id<NSCoding>, id<TCHTTPRequest>> *map = [_requestPool objectForKey:request.observer];
+    if (nil == map) {
+        map = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory];
+        [_requestPool setObject:map forKey:request.observer];
     }
     
     NSString *identifier = request.identifier;
-    id<TCHTTPRequest> preRequest = dic[identifier];
+    id<TCHTTPRequest> preRequest = [map objectForKey:identifier];
     if (request == preRequest) {
         [_poolLock unlock];
         return;
@@ -519,11 +519,11 @@
             [_poolLock unlock];
             return;
         }
-        [dic removeObjectForKey:identifier];
+        [map removeObjectForKey:identifier];
         [preRequest cancel]; // !!!: may call [_poolLock lock];
     }
     
-    dic[identifier] = request;
+    [map setObject:request forKey:identifier];
     [_poolLock unlock];
 }
 
@@ -533,43 +533,45 @@
     [self removeRequest:request forObserver:request.observer forIdentifier:request.identifier];
 }
 
-- (void)removeRequest:(id<TCHTTPRequest>)mRequest forObserver:(__unsafe_unretained id)observer forIdentifier:(id<NSCopying>)identifier
+- (void)removeRequest:(id<TCHTTPRequest>)mRequest forObserver:(__unsafe_unretained id)observer forIdentifier:(id<NSCoding>)identifier
 {
-    NSNumber *key = @((int)(__bridge void *)(observer));
-    
     [_poolLock lock];
-    NSMutableDictionary *dic = _requestPool[key];
     
+    NSMapTable<id<NSCoding>, id<TCHTTPRequest>> *map = [_requestPool objectForKey:observer];
     
-    if (nil == dic) {
+    if (nil == map) {
         [_poolLock unlock];
         return;
     }
     
     if (nil != identifier) {
-        id<TCHTTPRequest> request = dic[identifier];
+        id<TCHTTPRequest> request = [map objectForKey:identifier];
         if (nil != mRequest && request != mRequest) {
             [_poolLock unlock];
             return;
         }
         
         if (nil != request) {
-            [dic removeObjectForKey:identifier];
-            if (dic.count < 1) {
-                [_requestPool removeObjectForKey:key];
+            [map removeObjectForKey:identifier];
+            if (map.count < 1) {
+                [_requestPool removeObjectForKey:observer];
             }
             
             [request cancel];
         }
     } else {
-        [_requestPool removeObjectForKey:key];
-        [dic.allValues makeObjectsPerformSelector:@selector(cancel)];
+        [_requestPool removeObjectForKey:observer];
+        [map.dictionaryRepresentation.allValues makeObjectsPerformSelector:@selector(cancel)];
     }
+    
+//#ifdef DEBUG
+//    NSLog(@"||||------===> request pools: %zd", _requestPool.count);
+//#endif
     
     [_poolLock unlock];
 }
 
-- (void)removeRequestObserver:(__unsafe_unretained id)observer forIdentifier:(id<NSCopying>)identifier
+- (void)removeRequestObserver:(__unsafe_unretained id)observer forIdentifier:(id<NSCoding>)identifier
 {
     [self removeRequest:nil forObserver:observer forIdentifier:identifier];
 }
@@ -582,12 +584,15 @@
 - (void)removeAllRequests
 {
     [_poolLock lock];
+    NSMutableArray<id<TCHTTPRequest>> *arry = NSMutableArray.array;
     for (id key in _requestPool) {
-        NSArray *requests = _requestPool[key].allValues;
+        NSArray<id<TCHTTPRequest>> *requests = [_requestPool objectForKey:key].dictionaryRepresentation.allValues;
         if (nil != requests) {
-            [requests makeObjectsPerformSelector:@selector(cancel)];
+            [arry addObjectsFromArray:requests];
         }
     }
+    [arry makeObjectsPerformSelector:@selector(cancel)];
+    [_requestPool removeAllObjects];
     [_poolLock unlock];
 }
 
@@ -600,14 +605,14 @@
     }
     NSString *path = self.cachePathForResponse;
     if (nil != path) {
-        [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
+        [NSFileManager.defaultManager removeItemAtPath:path error:NULL];
     }
 }
 
 
 #pragma mark -
 
-- (NSString *)buildRequestUrlForRequest:(id<TCHTTPRequest>)request
+- (NSURL *)buildRequestUrlForRequest:(id<TCHTTPRequest>)request
 {
     NSString *queryUrl = request.apiUrl;
     
@@ -616,7 +621,7 @@
     }
     
     if ([queryUrl.lowercaseString hasPrefix:@"http"]) {
-        return queryUrl;
+        return [NSURL URLWithString:queryUrl];
     }
     
     NSURL *baseUrl = nil;
@@ -627,7 +632,7 @@
         baseUrl = self.baseURL;
     }
     
-    return [baseUrl URLByAppendingPathComponent:queryUrl].absoluteString;
+    return [baseUrl URLByAppendingPathComponent:queryUrl];
 }
 
 - (id<TCHTTPRespValidator>)responseValidatorForRequest:(id<TCHTTPRequest>)request

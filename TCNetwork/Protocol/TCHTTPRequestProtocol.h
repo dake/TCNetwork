@@ -57,8 +57,7 @@ typedef NS_ENUM(NSInteger, TCHTTPMethod) {
 @property (nonatomic, strong) NSDictionary *userInfo;
 @property (atomic, assign) TCRequestState state;
 
-- (void *)observer;
-- (void)setObserver:(__unsafe_unretained id)observer;
+@property (nonatomic, weak) id observer;
 
 
 /**
